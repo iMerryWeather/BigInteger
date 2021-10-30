@@ -1,3 +1,4 @@
+import Foundation
 public struct BigInteger {
     //FALSE for negative, TRUE for zero & positive
     var signum : Bool
@@ -37,29 +38,42 @@ public struct BigInteger {
         mag = [UInt64]()
         //Process digit group
         /*
-         * cursor represent start index of each digit group,
-         * ∂ represent end index of each digit group ("past the end position").
-         * c                ∂
-         * |                |
-         * 0                f 16                 etc.           count
-         * 000000000000000000  00000000000000000    000000000000
-         * ∂ maybe large than str count
+         * ∂ represent one smaller than the start index of each digit group,
+         * cursor represent end index of each digit group.
+         *                                       ∂                c.r (count - 1)
+         *                                       |                |
+         * Index: 0123456789abcd|efghijkl        c.r - 16          count  (number in hex)
+         * num:   00000000000000|00000000000000000|0000000000000000
+         * ∂ maybe smaller than zero
          * check it first
+         *
+         * for example:
+         * Index: 01234|56789abcdefghijk
+         * num:   61236|1193061935861236
+         *
+         * delta|cursor
+         * -----|------
+         *   4  |  20
+         *  -1  |   4
          */
-        var cursor = 0
-        while cursor < str.count {
-            var delta = cursor + DIGITS_PER_INT
-            //check whether delta is greater or equal to count
-            delta = min(delta, str.count)
-            //just for avoiding 3rd line being too long
+        var cursor = str.count - 1
+        while cursor > 0 {
+            var delta = cursor - DIGITS_PER_INT
+            //check whether delta is samller than zero
+            delta = max(delta, -1)
+            print((delta, cursor))
+            //just for avoiding the 3rd line being too long
+            let deltaIndex = str.index(str.startIndex, offsetBy: delta + 1)
             let cursorIndex = str.index(str.startIndex, offsetBy: cursor)
-            let deltaIndex = str.index(str.startIndex, offsetBy: delta)
-            mag.append(UInt64(str[cursorIndex ..< deltaIndex])!) //[the 3rd line]
-            
+            mag.append(UInt64(str[deltaIndex ... cursorIndex])!) //[the 3rd line]
+            //avoid (delta, cursor) == (0, 0)
+            /*if cursor - delta < DIGITS_PER_INT {
+                break
+            }*/
             cursor = delta
         }
         //Use big-endian in mag
-        mag = mag.reversed()
+        //mag = mag.reversed()
     }
     
     /*

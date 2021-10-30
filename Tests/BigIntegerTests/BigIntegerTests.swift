@@ -11,6 +11,7 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(a.mag, [61236, 6123611930619358])
         XCTAssertEqual(b.mag, [61236, 6123611930619358])
     }
+    
     func testExample() throws {
         let bi = BigInteger(from: "612361193061935861236")
         print("bi.mag: \(bi.mag)")
