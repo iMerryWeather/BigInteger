@@ -5,11 +5,12 @@ final class BigIntegerTests: XCTestCase {
     func testInit() {
         let a = BigInteger(from: "612361193061935861236")
         let b = BigInteger(from: "-612361193061935861236")
-        
-        XCTAssertEqual(a.mag, [6123611930619358, 61236])
-        XCTAssertEqual(b.mag, [6123611930619358, 61236])
+        print(a.mag)
+        print(a.add(rhs: a).mag)
+        print(a.add(rhs: a).toString())
+        XCTAssertEqual(a.mag, [61236, 6123611930619358])
+        XCTAssertEqual(b.mag, [61236, 6123611930619358])
     }
-    
     func testExample() throws {
         let bi = BigInteger(from: "612361193061935861236")
         print("bi.mag: \(bi.mag)")

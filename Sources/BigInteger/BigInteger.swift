@@ -54,10 +54,34 @@ public struct BigInteger {
             //just for avoiding 3rd line being too long
             let cursorIndex = str.index(str.startIndex, offsetBy: cursor)
             let deltaIndex = str.index(str.startIndex, offsetBy: delta)
-            mag.append(UInt64(str[cursorIndex ..< deltaIndex])!)
+            mag.append(UInt64(str[cursorIndex ..< deltaIndex])!) //[the 3rd line]
             
             cursor = delta
         }
+        //Use big-endian in mag
+        mag = mag.reversed()
+    }
+    
+    /*
+     * Construct a BigInteger by given signum & mag
+     */
+    private init(signum : Bool, mag : [UInt64]) {
+        self.signum = signum
+        self.mag = mag
+    }
+    
+    /*
+     * BigInteger to String
+     */
+    public func toString() -> String {
+        var res = ""
+        if !signum {
+            res += "-"
+        }
+        for i in mag.reversed() {
+            res += String(i)
+        }
+        return res
     }
     
     /*
@@ -94,5 +118,12 @@ public struct BigInteger {
             res.append(1)
         }
         return res
+    }
+    
+    /*
+     * Add two BigInteger
+     */
+    public func add(rhs : BigInteger) -> BigInteger {
+        return BigInteger(signum: true, mag: add(mag: rhs.mag))
     }
 }
