@@ -60,20 +60,15 @@ public struct BigInteger {
         while cursor > 0 {
             var delta = cursor - DIGITS_PER_INT
             //check whether delta is samller than zero
-            delta = max(delta, -1)
-            print((delta, cursor))
+            delta = max(delta, -1) //delta is the position where before the start index
+            
             //just for avoiding the 3rd line being too long
             let deltaIndex = str.index(str.startIndex, offsetBy: delta + 1)
             let cursorIndex = str.index(str.startIndex, offsetBy: cursor)
             mag.append(UInt64(str[deltaIndex ... cursorIndex])!) //[the 3rd line]
-            //avoid (delta, cursor) == (0, 0)
-            /*if cursor - delta < DIGITS_PER_INT {
-                break
-            }*/
+            
             cursor = delta
         }
-        //Use big-endian in mag
-        //mag = mag.reversed()
     }
     
     /*
@@ -136,8 +131,35 @@ public struct BigInteger {
     
     /*
      * Add two BigInteger
+     *     a   |   b   |        c
+     *   sign1 | sign2 |      result
+     *   ------|-------|-----------------
+     *     +   |   +   |     c = a + b
+     *     +   |   -   |     c = a - b
+     *     -   |   +   |     c = b - a
+     *     -   |   -   |     c = -(a + b)
      */
-    public func add(rhs : BigInteger) -> BigInteger {
-        return BigInteger(signum: true, mag: add(mag: rhs.mag))
+    private func add(rhs : BigInteger) -> BigInteger {
+        if self.signum && rhs.signum { //c = a + b
+            return BigInteger(signum: true, mag: add(mag: rhs.mag))
+        } else if self.signum && (!rhs.signum) { //c = a - b
+            //go to sub
+            return BigInteger(from: "0")
+        } else if (!self.signum) && rhs.signum { // c = b - a
+            //go to sub
+            return BigInteger(from: "0")
+        } else {
+            return BigInteger(signum: false, mag: add(mag: rhs.mag))
+        }
+    }
+}
+
+// MARK: - Operators
+extension BigInteger {
+    /*
+     * A wrapper for add
+     */
+    static func + (lhs: BigInteger, rhs: BigInteger) -> BigInteger {
+        return lhs.add(rhs: rhs)
     }
 }
