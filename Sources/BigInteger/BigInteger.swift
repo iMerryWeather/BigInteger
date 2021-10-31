@@ -2,11 +2,11 @@ import Foundation
 public struct BigInteger {
     //FALSE for negative, TRUE for zero & positive
     var signum : Bool
-    
+
     var mag : [UInt64]
-    
+
     let BASE : UInt64 = 10000000000000000
-    
+
     /*
      * This value is the number of digits of the decimal
      * radix that can fit in a UInt64 without "going negative",
@@ -14,7 +14,7 @@ public struct BigInteger {
      * (Maybe 18 is better, for test here choose 16.)
      */
     let DIGITS_PER_INT = 16
-    
+
     /*
      * Construct a BigInteger from String
      */
@@ -29,7 +29,7 @@ public struct BigInteger {
                 str.removeFirst()
             }
         }
-        
+
         //TO-DO
         //check if str consist of digit characters
         /*
@@ -61,16 +61,16 @@ public struct BigInteger {
             var delta = cursor - DIGITS_PER_INT
             //check whether delta is samller than zero
             delta = max(delta, -1) //delta is the position where before the start index
-            
+
             //just for avoiding the 3rd line being too long
             let deltaIndex = str.index(str.startIndex, offsetBy: delta + 1)
             let cursorIndex = str.index(str.startIndex, offsetBy: cursor)
             mag.append(UInt64(str[deltaIndex ... cursorIndex])!) //[the 3rd line]
-            
+
             cursor = delta
         }
     }
-    
+
     /*
      * Construct a BigInteger by given signum & mag
      */
@@ -78,7 +78,7 @@ public struct BigInteger {
         self.signum = signum
         self.mag = mag
     }
-    
+
     /*
      * BigInteger to String
      */
@@ -92,7 +92,7 @@ public struct BigInteger {
         }
         return res
     }
-    
+
     /*
      * Add two mag
      */
@@ -109,9 +109,9 @@ public struct BigInteger {
                 mag2.append(0)
             }
         }
-        
+
         var res = [UInt64]()
-        
+
         var carry : UInt64 = 0
         for i in 0 ..< mag1.count {
             res.append(mag1[i] + mag2[i] + carry)
@@ -128,7 +128,48 @@ public struct BigInteger {
         }
         return res
     }
-    
+
+    /*
+     * Sub two mag
+     * always big - small in abs.
+     * won't check here
+     *
+     *   1236112361123612|19358
+     * - 1935819358193582|1236
+     * ------------------------
+     * ==
+     *   1236112361123612 + BASE|19358 - 1
+     * - 1935819358193582       |1236
+     * -----------------------------------
+     *   9300293002930030       |18121
+     */
+     public func sub(mag : [UInt64]) -> [UInt64] {
+         var mag1 = self.mag
+         var mag2 = mag
+
+         //Add zeros if two mags don't have same length
+        if mag1.count < mag2.count {
+            for _ in mag1.count ..< mag2.count {
+                mag1.append(0)
+            }
+        } else {
+            for _ in mag2.count ..< mag1.count {
+                mag2.append(0)
+            }
+        }
+
+        var res = [UInt64]()
+        for i in 0 ..< mag1.count {
+            if mag1[i] < mag2[i] { //no enough to sub, borrow
+                mag1[i] += BASE
+                mag1[i + 1] -= 1
+            }
+            res.append(mag1[i] - mag2[i])
+        }
+
+        return res
+     }
+
     /*
      * Add two BigInteger
      *     a   |   b   |        c
