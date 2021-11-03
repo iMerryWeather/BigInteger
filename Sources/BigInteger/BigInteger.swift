@@ -142,6 +142,7 @@ public struct BigInteger {
      * Sub two mag
      * always big - small in abs.
      * won't check here
+     * here we assume mag1 ≥ mag2
      *
      *   1236112361123612|19358
      * - 1935819358193582|1236
@@ -152,16 +153,12 @@ public struct BigInteger {
      * -----------------------------------
      *   9300293002930030       |18121
      */
-    public func sub(mag : [UInt64]) -> [UInt64] {
-        var mag1 = self.mag
-        var mag2 = mag
+    private func sub(mag1 : [UInt64], mag2 : [UInt64]) -> [UInt64] {
+        var mag1 = BigInteger.removeLeadingZeros(mag: mag1)
+        var mag2 = BigInteger.removeLeadingZeros(mag: mag2)
 
         //Add zeros if two mags don't have same length
-        if mag1.count < mag2.count {
-            for _ in mag1.count ..< mag2.count {
-                mag1.append(0)
-            }
-        } else {
+        if mag1.count > mag2.count {
             for _ in mag2.count ..< mag1.count {
                 mag2.append(0)
             }
@@ -238,9 +235,20 @@ public struct BigInteger {
      *
      * return true if mag1 ≥ mag2
      */
-    private static func compare(mag1 : [UInt64], mag2 : [UInt64]) -> Bool {
+    private static func compareAbs(mag1 : [UInt64], mag2 : [UInt64]) -> Bool {
+        let mag1 = BigInteger.removeLeadingZeros(mag: mag1)
+        let mag2 = BigInteger.removeLeadingZeros(mag: mag2)
+
+        //Longer is bigger
         if mag1.count != mag2.count {
-            return false
+            return mag1.count > mag2.count
+        }
+
+        //compare from 0 to count
+        for i in 0 ..< mag1.count {
+            if mag1[i] < mag2[i] {
+                return false
+            }
         }
         return true
     }
