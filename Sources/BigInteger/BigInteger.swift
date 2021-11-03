@@ -36,6 +36,13 @@ public struct BigInteger {
          * if
          */
         mag = [UInt64]()
+
+        //if digits length is one
+        if str.count == 1 {
+            mag.append(UInt64(str)!)
+            return
+        }
+
         //Process digit group
         /*
          * ∂ represent one smaller than the start index of each digit group,
@@ -69,6 +76,8 @@ public struct BigInteger {
 
             cursor = delta
         }
+        //remove leading zeros
+        mag = BigInteger.removeLeadingZeros(mag: mag)
     }
 
     /*
@@ -143,11 +152,11 @@ public struct BigInteger {
      * -----------------------------------
      *   9300293002930030       |18121
      */
-     public func sub(mag : [UInt64]) -> [UInt64] {
-         var mag1 = self.mag
-         var mag2 = mag
+    public func sub(mag : [UInt64]) -> [UInt64] {
+        var mag1 = self.mag
+        var mag2 = mag
 
-         //Add zeros if two mags don't have same length
+        //Add zeros if two mags don't have same length
         if mag1.count < mag2.count {
             for _ in mag1.count ..< mag2.count {
                 mag1.append(0)
@@ -168,7 +177,7 @@ public struct BigInteger {
         }
 
         return res
-     }
+    }
 
     /*
      * Add two BigInteger
@@ -193,14 +202,80 @@ public struct BigInteger {
             return BigInteger(signum: false, mag: add(mag: rhs.mag))
         }
     }
+
+    /*
+     * remove all leading zeros, if mag is all zero, mag will equal [0]
+     */
+    private static func removeLeadingZeros(mag : [UInt64]) -> [UInt64] {
+        var mag = mag
+        if mag.last != nil {
+            if mag.last != 0 { // the most-significant int of the magnitude
+                return mag     // is zero, meaning no leading zeros.
+            }
+        }
+
+        //go through the mag, remove the zero int until meet first non-zero element
+        var i = mag.count - 1
+        while true {
+            if mag[i] == 0 {
+                mag.removeLast()
+                i -= 1
+                if i <= 0 { // if all zero
+                    mag = [0]
+                    break
+                }
+            } else {
+                break
+            }
+        }
+        return mag
+    }
+
+    /*
+     * (check leading zeros first)
+     * 1) Longer is bigger
+     * 2) if both have the same length, then compare from index 0.
+     *
+     * return true if mag1 ≥ mag2
+     */
+    private static func compare(mag1 : [UInt64], mag2 : [UInt64]) -> Bool {
+        if mag1.count != mag2.count {
+            return false
+        }
+        return true
+    }
+
+    /*
+     * Sub two BigInteger
+     * compare first
+     * always big - small
+     *
+     *     a   |   b   |        c
+     *   sign1 | sign2 |      result
+     *   ------|-------|-----------------
+     *     +   |   +   |     c = a + b
+     *     +   |   -   |     c = a - b
+     *     -   |   +   |     c = b - a
+     *     -   |   -   |     c = -(a + b)
+     */
+    // private func sub(rhs : BigInteger) -> BigInteger {
+
+    // }
 }
 
 // MARK: - Operators
 extension BigInteger {
     /*
-     * A wrapper for add
+     * A wrapper of add
      */
-    static func + (lhs: BigInteger, rhs: BigInteger) -> BigInteger {
+    static func + (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return lhs.add(rhs: rhs)
     }
+
+    /*
+     * A wrapper of sub
+     */
+    // static func - (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+    //     return lhs.sub(mag:)
+    // }
 }
