@@ -128,7 +128,7 @@ public struct BigInteger {
     /*
      * remove all leading zeros, if mag is all zero, mag will equal [0]
      */
-    private func removeLeadingZeros(mag : [UInt32]) -> [UInt32] {
+    func removeLeadingZeros(mag : [UInt32]) -> [UInt32] {
         var mag = mag
         if mag.last != nil {
             if mag.last != 0 { // the most-significant int of the magnitude
@@ -217,80 +217,6 @@ public struct BigInteger {
         }
         return c
     }*/
-}
-
-// MARK: - Addition & Subtraction
-extension BigInteger {
-    /*
-     * Adds the contents of the uint32 arrays x and y. This method allocates
-     * a new int array to hold the answer and returns a reference to that
-     * array.
-     *
-     * Knuth's Algorithm A
-     * See Knuth, Donald,  _The Art of Computer Programming_, Vol. 2, (4.3)
-     */
-    public func add(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
-        var mag1 = mag1
-        var mag2 = mag2
-        //Add zeros if two mags don't have same length
-        if mag1.count < mag2.count {
-            for _ in mag1.count ..< mag2.count {
-                mag1.append(0)
-            }
-        } else {
-            for _ in mag2.count ..< mag1.count {
-                mag2.append(0)
-            }
-        }
-        let n = mag1.count
-        var res = [UInt32]()
-
-        //variable carry will keep track of carries at each step
-        var carry : UInt32 = 0
-        for j in 0 ..< n {
-            res.append((mag1[j] + mag2[j] + carry) % BASE)
-            carry = (mag1[j] + mag2[j] + carry) / BASE
-        }
-
-        //means mag1[n] + mag2[n] > BASE, extra space needed
-        if carry != 0 {
-            res.append(carry)
-        }
-
-        return res
-    }
-
-    /*
-     * Subtracts the contents of the second uint32 arrays (little) from the
-     * first (big).  The first int array (big) must represent a larger number
-     * than the second.  This method allocates the space necessary to hold the
-     * answer.
-     *
-     * Knuth's Algorithm S
-     * See Knuth, Donald,  _The Art of Computer Programming_, Vol. 2, (4.3)
-     */
-
-    public func subtract(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
-        var mag2 = mag2
-        //Add zeros if two mags don't have same length
-        if mag1.count > mag2.count {
-            for _ in mag2.count ..< mag1.count {
-                mag2.append(0)
-            }
-        }
-
-        let n = mag1.count
-        var res = [UInt32]()
-
-        var borrow : UInt32 = 0
-        for j in 0 ..< n {
-            res.append((mag1[j] - mag2[j] + borrow) % BASE)
-            borrow = (mag1[j] - mag2[j] + borrow) / BASE
-        }
-
-        res = removeLeadingZeros(mag: res) // when a - a = 0, shrink mag to [0]
-        return res
-    }
 }
 
 // MARK: - Operators
