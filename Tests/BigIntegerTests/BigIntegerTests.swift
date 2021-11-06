@@ -4,17 +4,47 @@ import XCTest
 final class BigIntegerTests: XCTestCase {
     func testPublicInitFromStr() {
         let a = BigInteger(from: "0000000000000000000000000000000000000612361193061935861237")
-        XCTAssertEqual(a.mag, [1193061935861237, 61236])
+        XCTAssertEqual(a.mag, [935861237, 361193061, 612])
         XCTAssertEqual(a.signum, true)
 
         let b = BigInteger(from: "-6123611930619358612362")
-        XCTAssertEqual(b.mag, [1930619358612362, 612361])
+        XCTAssertEqual(b.mag, [358612362, 611930619, 6123])
         XCTAssertEqual(b.signum, false)
 
         let c = BigInteger(from: "0")
         XCTAssertEqual(c.mag, [0])
         XCTAssertEqual(c.signum, true)
+
     }
+
+    func testAddMag() {
+        let a = BigInteger(from: "612361193061935861237")
+        let b = BigInteger(from: "61935861237")
+        let c = BigInteger(from: "523456612361193061935861237")
+        let d = BigInteger(from: "500000000000000000000000000")
+        XCTAssertEqual(a.add(mag1: a.mag, mag2: b.mag), [871722474, 361193123, 612])
+        XCTAssertEqual(c.add(mag1: c.mag, mag2: c.mag), [871722474, 722386123, 046913224, 1])
+        XCTAssertEqual(c.add(mag1: d.mag, mag2: d.mag), [0, 0, 0, 1])
+
+    }
+
+    func testSubtractMag() {
+        let a = BigInteger(from: "612361193061935861237")
+        let b = BigInteger(from: "61935861237")
+        let c = BigInteger(from: "523456612361193061935861237")
+        let d = BigInteger(from: "500000000000000000000000000")
+        XCTAssertEqual(a.subtract(mag1: a.mag, mag2: b.mag), [0, 361193000, 612])
+        XCTAssertEqual(c.subtract(mag1: c.mag, mag2: d.mag), [935861237, 361193061, 23456612])
+        XCTAssertEqual(c.subtract(mag1: d.mag, mag2: d.mag), [0])
+
+    }
+
+    /*func testAdd() {
+        let a = BigInteger(from: "0000000000000000000000000000000000000612361193061935861237")
+        //let b = BigInteger(from: "-6123611930619358612362")
+        XCTAssertEqual((a + a).mag, BigInteger(from: "1224722386123871722474").mag)
+        XCTAssertEqual((a + a).signum, BigInteger(from: "1224722386123871722474").signum)
+    }*/
 
     /*
      * this test only starts with non-private func

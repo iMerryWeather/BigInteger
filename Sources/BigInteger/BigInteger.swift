@@ -3,17 +3,18 @@ public struct BigInteger {
     //FALSE for negative, TRUE for zero & positive
     var signum : Bool
 
-    var mag : [UInt64]
+    var mag : [UInt32]
 
-    let BASE : UInt64 = 10000000000000000
+    /*
+     *
+     */
+    let BASE : UInt32 = 1000000000
 
     /*
      * This value is the number of digits of the decimal
-     * radix that can fit in a UInt64 without "going negative",
-     *
-     * (Maybe 18 is better, for test here choose 16.)
+     * radix that can fit in a UInt32 without overflowing,
      */
-    let DIGITS_PER_INT = 16
+    let DIGITS_PER_INT = 9
 
     /*
      * Construct a BigInteger from String
@@ -35,11 +36,11 @@ public struct BigInteger {
         /*
          * if
          */
-        mag = [UInt64]()
+        mag = [UInt32]()
 
         //if digits length is one
         if str.count == 1 {
-            mag.append(UInt64(str)!)
+            mag.append(UInt32(str)!)
             return
         }
 
@@ -72,18 +73,18 @@ public struct BigInteger {
             //just for avoiding the 3rd line being too long
             let deltaIndex = str.index(str.startIndex, offsetBy: delta + 1)
             let cursorIndex = str.index(str.startIndex, offsetBy: cursor)
-            mag.append(UInt64(str[deltaIndex ... cursorIndex])!) //[the 3rd line]
+            mag.append(UInt32(str[deltaIndex ... cursorIndex])!) //[the 3rd line]
 
             cursor = delta
         }
         //remove leading zeros
-        mag = BigInteger.removeLeadingZeros(mag: mag)
+        mag = removeLeadingZeros(mag: mag)
     }
 
     /*
      * Construct a BigInteger by given signum & mag
      */
-    private init(signum : Bool, mag : [UInt64]) {
+    private init(signum : Bool, mag : [UInt32]) {
         self.signum = signum
         self.mag = mag
     }
@@ -103,80 +104,6 @@ public struct BigInteger {
     }
 
     /*
-     * Add two mag
-     */
-    private func add(mag : [UInt64]) -> [UInt64] {
-        var mag1 = self.mag
-        var mag2 = mag
-        //Add zeros if two mags don't have same length
-        if mag1.count < mag2.count {
-            for _ in mag1.count ..< mag2.count {
-                mag1.append(0)
-            }
-        } else {
-            for _ in mag2.count ..< mag1.count {
-                mag2.append(0)
-            }
-        }
-
-        var res = [UInt64]()
-
-        var carry : UInt64 = 0
-        for i in 0 ..< mag1.count {
-            res.append(mag1[i] + mag2[i] + carry)
-            if res[i] >= BASE {
-                res[i] -= BASE
-                carry = 1
-            } else {
-                carry = 0
-            }
-        }
-        //Last carry
-        if carry == 1 {
-            res.append(1)
-        }
-        return res
-    }
-
-    /*
-     * Sub two mag
-     * always big - small in abs.
-     * won't check here
-     * here we assume mag1 ≥ mag2
-     *
-     *   1236112361123612|19358
-     * - 1935819358193582|1236
-     * ------------------------
-     * ==
-     *   1236112361123612 + BASE|19358 - 1
-     * - 1935819358193582       |1236
-     * -----------------------------------
-     *   9300293002930030       |18121
-     */
-    private func sub(mag1 : [UInt64], mag2 : [UInt64]) -> [UInt64] {
-        var mag1 = BigInteger.removeLeadingZeros(mag: mag1)
-        var mag2 = BigInteger.removeLeadingZeros(mag: mag2)
-
-        //Add zeros if two mags don't have same length
-        if mag1.count > mag2.count {
-            for _ in mag2.count ..< mag1.count {
-                mag2.append(0)
-            }
-        }
-
-        var res = [UInt64]()
-        for i in 0 ..< mag1.count {
-            if mag1[i] < mag2[i] { //no enough to sub, borrow
-                mag1[i] += BASE
-                mag1[i + 1] -= 1
-            }
-            res.append(mag1[i] - mag2[i])
-        }
-
-        return res
-    }
-
-    /*
      * Add two BigInteger
      *     a   |   b   |        c
      *   sign1 | sign2 |      result
@@ -186,24 +113,22 @@ public struct BigInteger {
      *     -   |   +   |     c = b - a
      *     -   |   -   |     c = -(a + b)
      */
-    private func add(rhs : BigInteger) -> BigInteger {
+    /*private func add(rhs : BigInteger) -> BigInteger {
         if self.signum && rhs.signum { //c = a + b
-            return BigInteger(signum: true, mag: add(mag: rhs.mag))
+            return BigInteger(signum: true, mag: add(mag1: self.mag, mag2: rhs.mag))
         } else if self.signum && (!rhs.signum) { //c = a - b
-            //go to sub
-            return BigInteger(from: "0")
+            return self.sub(rhs: rhs)
         } else if (!self.signum) && rhs.signum { // c = b - a
-            //go to sub
-            return BigInteger(from: "0")
+            return rhs.sub(rhs: self)
         } else {
-            return BigInteger(signum: false, mag: add(mag: rhs.mag))
+            return BigInteger(signum: false, mag: add(mag1: self.mag, mag2: rhs.mag))
         }
-    }
+    }*/
 
     /*
      * remove all leading zeros, if mag is all zero, mag will equal [0]
      */
-    private static func removeLeadingZeros(mag : [UInt64]) -> [UInt64] {
+    private func removeLeadingZeros(mag : [UInt32]) -> [UInt32] {
         var mag = mag
         if mag.last != nil {
             if mag.last != 0 { // the most-significant int of the magnitude
@@ -211,7 +136,8 @@ public struct BigInteger {
             }
         }
 
-        //go through the mag, remove the zero int until meet first non-zero element
+        //go through the mag, remove the zero int until meet first non-zero
+        //element
         var i = mag.count - 1
         while true {
             if mag[i] == 0 {
@@ -235,7 +161,7 @@ public struct BigInteger {
      *
      * return true if mag1 ≥ mag2
      */
-    private static func compareAbs(mag1 : [UInt64], mag2 : [UInt64]) -> Bool {
+    /*private static func compareAbs(mag1 : [UInt64], mag2 : [UInt64]) -> Bool {
         let mag1 = BigInteger.removeLeadingZeros(mag: mag1)
         let mag2 = BigInteger.removeLeadingZeros(mag: mag2)
 
@@ -251,7 +177,15 @@ public struct BigInteger {
             }
         }
         return true
-    }
+    }*/
+
+    /*
+     * if a is a BigInteger, then a.negate() will gets
+     *  value = -a
+     */
+    /*private mutating func negate() {
+        self.signum = !self.signum
+    }*/
 
     /*
      * Sub two BigInteger
@@ -261,14 +195,102 @@ public struct BigInteger {
      *     a   |   b   |        c
      *   sign1 | sign2 |      result
      *   ------|-------|-----------------
-     *     +   |   +   |     c = a + b
-     *     +   |   -   |     c = a - b
-     *     -   |   +   |     c = b - a
-     *     -   |   -   |     c = -(a + b)
+     *     +   |   +   |     c = |a| - |b|
+     *     +   |   -   |     c = |a| + |b|
+     *     -   |   +   |     c = (-|a|) - (+|b|) = -(|a| + |b|)
+     *     -   |   -   |     c = -(|a| + |b|)
      */
-    // private func sub(rhs : BigInteger) -> BigInteger {
+    /*private func sub(rhs : BigInteger) -> BigInteger {
+        var c : BigInteger
+        if self.signum && rhs.signum {
+            if BigInteger.compareAbs(mag1: self.mag, mag2: rhs.mag) { // a >= b
+                c = BigInteger(signum: true, mag: sub(mag1: self.mag, mag2: rhs.mag))
+            } else {
+                c = BigInteger(signum: false, mag: sub(mag1: rhs.mag, mag2: self.mag))
+            }
+        } else if self.signum && !rhs.signum {
+            c = BigInteger(signum: true, mag: add(mag1: self.mag, mag2: rhs.mag))
+        } else if !self.signum && rhs.signum {
+            c = BigInteger(from: "0")
+        } else {
+            c = BigInteger(from: "0")
+        }
+        return c
+    }*/
+}
 
-    // }
+// MARK: - Addition & Subtraction
+extension BigInteger {
+    /*
+     * Adds the contents of the uint32 arrays x and y. This method allocates
+     * a new int array to hold the answer and returns a reference to that
+     * array.
+     *
+     * Knuth's Algorithm A
+     * See Knuth, Donald,  _The Art of Computer Programming_, Vol. 2, (4.3)
+     */
+    public func add(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
+        var mag1 = mag1
+        var mag2 = mag2
+        //Add zeros if two mags don't have same length
+        if mag1.count < mag2.count {
+            for _ in mag1.count ..< mag2.count {
+                mag1.append(0)
+            }
+        } else {
+            for _ in mag2.count ..< mag1.count {
+                mag2.append(0)
+            }
+        }
+        let n = mag1.count
+        var res = [UInt32]()
+
+        //variable carry will keep track of carries at each step
+        var carry : UInt32 = 0
+        for j in 0 ..< n {
+            res.append((mag1[j] + mag2[j] + carry) % BASE)
+            carry = (mag1[j] + mag2[j] + carry) / BASE
+        }
+
+        //means mag1[n] + mag2[n] > BASE, extra space needed
+        if carry != 0 {
+            res.append(carry)
+        }
+
+        return res
+    }
+
+    /*
+     * Subtracts the contents of the second uint32 arrays (little) from the
+     * first (big).  The first int array (big) must represent a larger number
+     * than the second.  This method allocates the space necessary to hold the
+     * answer.
+     *
+     * Knuth's Algorithm S
+     * See Knuth, Donald,  _The Art of Computer Programming_, Vol. 2, (4.3)
+     */
+
+    public func subtract(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
+        var mag2 = mag2
+        //Add zeros if two mags don't have same length
+        if mag1.count > mag2.count {
+            for _ in mag2.count ..< mag1.count {
+                mag2.append(0)
+            }
+        }
+
+        let n = mag1.count
+        var res = [UInt32]()
+
+        var borrow : UInt32 = 0
+        for j in 0 ..< n {
+            res.append((mag1[j] - mag2[j] + borrow) % BASE)
+            borrow = (mag1[j] - mag2[j] + borrow) / BASE
+        }
+
+        res = removeLeadingZeros(mag: res) // when a - a = 0, shrink mag to [0]
+        return res
+    }
 }
 
 // MARK: - Operators
@@ -276,9 +298,9 @@ extension BigInteger {
     /*
      * A wrapper of add
      */
-    static func + (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+    /*static func + (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return lhs.add(rhs: rhs)
-    }
+    }*/
 
     /*
      * A wrapper of sub
