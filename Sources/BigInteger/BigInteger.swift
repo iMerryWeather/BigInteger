@@ -8,26 +8,49 @@ public struct BigInteger {
     /*
      *
      */
-    let BASE : UInt32 = 1000000000
+    let BASE : UInt64 = 4294967296 // 1 << 32
 
     /*
-     * This value is the number of digits of the decimal
-     * radix that can fit in a UInt32 without overflowing,
+     * The following two values are used for fast String conversions.
+     * intRadix = 10 ** DIGITS_PER_INT = 10 ** 9
+     */
+    let intRadix : UInt32 = 0x3b9aca00 //1000000000
+    /*
+     * This value is the number of digits of the decimal radix that can fit in
+     * a UInt32 without overflowing.
      */
     let DIGITS_PER_INT = 9
 
     /*
-     * Construct a BigInteger from String
+     * bitsPerDigit in the decimal times 1024. (1 << 10)
+     * Rounded up to avoid under-allocation.
+     *
+     * Suppose we have a m digits decimal number, bitsPerDigit is how many bits
+     * needed by converting it to binary. (Assume x bits.)
+     * We have 10 ** m - 1 = 2 ** x - 1, then x = m * log2(10).
+     *
+     * bitsPerDigit = log2(10) * 1024 ≈ 3401.654369164659
+     * When we use it, remember to divide 1024 (>> 10)
+     */
+    private let bitsPerDigit : UInt64 = 3402
+
+    /*
+     * Translates the decimal String representation of a BigInteger into a
+     * BigInteger. The String representation consists of an optional minus or
+     * plus sign followed by a sequence of one or more decimal digits.
+     *
+     * After checking the sign of the number, we split it up into 9-digits
+     * group, then convert these groups into base = 2**32.
      */
     public init(from str : String) {
-        var str = str
+        var cursor = 0
         if str.first == "-" {
             signum = false
-            str.removeFirst()
+            cursor += 1
         } else {
             signum = true
             if str.first == "+" {
-                str.removeFirst()
+                cursor += 1
             }
         }
 
@@ -36,7 +59,26 @@ public struct BigInteger {
         /*
          * if
          */
-        mag = [UInt32]()
+
+        //Skip leading zeros
+        while cursor < str.count &&
+              str[str.index(str.startIndex, offsetBy: cursor)] == "0" {
+            cursor += 1
+        }
+
+        //if all zero
+        if cursor == str.count {
+            mag = [0]
+            signum = true
+            return
+        }
+        let numDigits = str.count - cursor
+
+        //Pre-allocate array of expected size. May be too large but can never be
+        //too small. Typically exact.
+        let numBits = ((UInt64(numDigits) * bitsPerDigit) >> 10) + 1
+        let numWords = UInt32(truncatingIfNeeded: (numBits + 31) >> 5)
+        mag = [UInt32](repeating: 0, count: Int(numWords))
 
         //if digits length is one
         if str.count == 1 {
@@ -44,41 +86,57 @@ public struct BigInteger {
             return
         }
 
-        //Process digit group
-        /*
-         * ∂ represent one smaller than the start index of each digit group,
-         * cursor represent end index of each digit group.
-         *                                       ∂                c.r (count - 1)
-         *                                       |                |
-         * Index: 0123456789abcd|efghijkl        c.r - 16          count  (number in hex)
-         * num:   00000000000000|00000000000000000|0000000000000000
-         * ∂ maybe smaller than zero
-         * check it first
-         *
-         * for example:
-         * Index: 01234|56789abcdefghijk
-         * num:   61236|1193061935861236
-         *
-         * delta|cursor
-         * -----|------
-         *   4  |  20
-         *  -1  |   4
-         */
-        var cursor = str.count - 1
-        while cursor > 0 {
-            var delta = cursor - DIGITS_PER_INT
-            //check whether delta is samller than zero
-            delta = max(delta, -1) //delta is the position where before the start index
+        //Process first digit group
+        var firstGroupCount = numDigits % DIGITS_PER_INT
 
-            //just for avoiding the 3rd line being too long
-            let deltaIndex = str.index(str.startIndex, offsetBy: delta + 1)
+        if firstGroupCount == 0 {
+            firstGroupCount = DIGITS_PER_INT
+        }
+        let group = str[str.index(str.startIndex, offsetBy: cursor) ..<
+                str.index(str.startIndex, offsetBy: cursor + firstGroupCount)]
+        mag[0] = UInt32(group)!
+        cursor += firstGroupCount
+
+        //Process remaining digit group
+        while cursor < str.count {
+            var delta = cursor + DIGITS_PER_INT
+            delta = min(delta, str.count) //avoid exceeding the range of str
+            let deltaIndex = str.index(str.startIndex, offsetBy: delta)
             let cursorIndex = str.index(str.startIndex, offsetBy: cursor)
-            mag.append(UInt32(str[deltaIndex ... cursorIndex])!) //[the 3rd line]
+            let groupVal = UInt32(str[cursorIndex ..< deltaIndex])!
+
+            BigInteger.destructiveMulAdd(&mag, intRadix, groupVal)
 
             cursor = delta
         }
+
         //remove leading zeros
+        //caused by over-allocate, we do it unconditionally.
         mag = removeLeadingZeros(mag: mag)
+    }
+
+    // Multiply x array times word y in place, and add word z
+    // Used by init(from:_ str) for radix conversion
+    public static func
+        destructiveMulAdd(_ x : inout [UInt32], _ y : UInt32, _ z : UInt32) {
+        //Perform the multiplication word by word
+        var product : UInt64 = 0
+        var carry : UInt64 = 0
+        for i in 0 ..< x.count {
+            product = UInt64(x[i]) * UInt64(y) + carry
+            x[i] = UInt32(truncatingIfNeeded: product) // x[i] = product % (1 << 32)
+            carry = product >> 32              // carry = product / (1 << 32)
+        }
+
+        //Perform the addition
+        //do x[0] + z first, check wether it has a carry
+        carry = UInt64(z)
+        var sum : UInt64 = 0
+        for i in 0 ..< x.count {
+            sum = UInt64(x[i]) + carry
+            x[i] = UInt32(truncatingIfNeeded: sum)
+            carry = sum >> 32
+        }
     }
 
     /*
@@ -97,6 +155,12 @@ public struct BigInteger {
         if !signum {
             res += "-"
         }
+        /*
+         * Because we treat mag as a unsigned BASE-radix number, so we need to
+         * convert it to decimal to get a output.
+         * By intuition, if mag[i] is not the last term in mag array and doesn't
+         * consist of 10 digits, then it will
+         */
         for i in mag.reversed() {
             res += String(i)
         }

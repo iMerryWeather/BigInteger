@@ -25,8 +25,8 @@ extension BigInteger {
         //variable carry will keep track of carries at each step
         var carry : UInt32 = 0
         for j in 0 ..< n {
-            res.append((mag1[j] + mag2[j] + carry) % BASE)
-            carry = (mag1[j] + mag2[j] + carry) / BASE
+            res.append(UInt32(truncatingIfNeeded: (mag1[j] + mag2[j] + carry)))
+            carry = (mag1[j] + mag2[j] + carry) >> 32
         }
 
         //means mag1[n] + mag2[n] > BASE, extra space needed
@@ -46,7 +46,7 @@ extension BigInteger {
      * Knuth's Algorithm S
      * See Knuth, Donald,  _The Art of Computer Programming_, Vol. 2, (4.3)
      */
-
+/*
     func subtract(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
         var mag2 = mag2
         //Add zeros if two mags don't have same length
@@ -66,5 +66,5 @@ extension BigInteger {
         }
 
         return removeLeadingZeros(mag: res) //when a - a = 0, shrink mag to [0]
-    }
+    }*/
 }
