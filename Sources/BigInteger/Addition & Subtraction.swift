@@ -25,8 +25,9 @@ extension BigInteger {
         //variable carry will keep track of carries at each step
         var carry : UInt32 = 0
         for j in 0 ..< n {
-            res.append(UInt32(truncatingIfNeeded: (mag1[j] + mag2[j] + carry)))
-            carry = (mag1[j] + mag2[j] + carry) >> 32
+            let delta = UInt64(mag1[j]) + UInt64(mag2[j]) + UInt64(carry)
+            res.append(UInt32(truncatingIfNeeded: delta))
+            carry = UInt32(delta >> 32)
         }
 
         //means mag1[n] + mag2[n] > BASE, extra space needed
