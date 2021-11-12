@@ -47,7 +47,7 @@ extension BigInteger {
      * Knuth's Algorithm S
      * See Knuth, Donald,  _The Art of Computer Programming_, Vol. 2, (4.3)
      */
-/*
+
     func subtract(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
         var mag2 = mag2
         //Add zeros if two mags don't have same length
@@ -60,12 +60,14 @@ extension BigInteger {
         let n = mag1.count
         var res = [UInt32]()
 
-        var borrow : UInt32 = 0
+        var borrow : Int64 = 0
         for j in 0 ..< n {
-            res.append((mag1[j] - mag2[j] + borrow) % BASE)
-            borrow = (mag1[j] - mag2[j] + borrow) / BASE
+            //borrow is either -1 or 0, which is signed
+            let delta = Int64(mag1[j]) &- Int64(mag2[j]) + borrow
+            res.append(UInt32(truncatingIfNeeded: delta))
+            borrow = delta >> 32
         }
 
         return removeLeadingZeros(mag: res) //when a - a = 0, shrink mag to [0]
-    }*/
+    }
 }
