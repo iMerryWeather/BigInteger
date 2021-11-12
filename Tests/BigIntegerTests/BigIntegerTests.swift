@@ -3,7 +3,8 @@ import XCTest
 
 final class BigIntegerTests: XCTestCase {
     func testPublicInitFromStr() {
-        let a = BigInteger(from: "0000000000000000000000000000000000000612361193061935861237")
+        let a = BigInteger(from:
+                "0000000000000000000000000000000000000612361193061935861237")
         XCTAssertEqual(a.mag, [1125502453, 842529961, 33])
         XCTAssertEqual(a.signum, true)
 
@@ -37,22 +38,26 @@ final class BigIntegerTests: XCTestCase {
         let b = BigInteger(from: "61935861237")
         let c = BigInteger(from: "523456612361193061935861237")
         let d = BigInteger(from: "500000000000000000000000000")
-        XCTAssertEqual(a.subtract(mag1: a.mag, mag2: b.mag), [3614150656, 842529946, 33])
-        XCTAssertEqual(c.subtract(mag1: c.mag, mag2: d.mag), [1192611317, 2164911735, 1271585])
+        XCTAssertEqual(a.subtract(mag1: a.mag, mag2: b.mag),
+                       [3614150656, 842529946, 33])
+        XCTAssertEqual(c.subtract(mag1: c.mag, mag2: d.mag),
+                       [1192611317, 2164911735, 1271585])
         XCTAssertEqual(c.subtract(mag1: d.mag, mag2: d.mag), [0])
 
     }
-/*
+
     func testMulMag() {
         let a = BigInteger(from: "612361193061935861237")
         let b = BigInteger(from: "61935861237")
         let c = BigInteger(from: "523456612361193061935861237")
         let d = BigInteger(from: "500000000000000000000000000")
 
-        XCTAssertEqual(a.multiply(mag1: a.mag, mag2: b.mag), [919170169, 826648168, 117880407, 37927])
-        XCTAssertEqual(c.multiply(mag1: c.mag, mag2: d.mag), [0, 0, 500000000, 967930618, 180596530, 261728306])
+        XCTAssertEqual(a.multiply(mag1: a.mag, mag2: b.mag),
+                       [2443410553, 2573930479, 3038812614, 478])
+        XCTAssertEqual(c.multiply(mag1: c.mag, mag2: d.mag),
+            [67108864, 2044281865, 1819053428, 197960665, 3325078967, 179081])
         XCTAssertEqual(c.multiply(mag1: c.mag, mag2: [0]), [0])
-    }*/
+    }
 
     /*func testAdd() {
         let a = BigInteger(from: "0000000000000000000000000000000000000612361193061935861237")
