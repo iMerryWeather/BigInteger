@@ -83,7 +83,7 @@ extension BigInteger {
             k = 0
             for i in 0 ..< n {
                 p = q_hat * UInt64(vn[i])
-                t = Int64(un[i + j]) - k - (Int64(p) & 0xFFFFFFFF)
+                t = Int64(un[i + j]) - k - Int64(p & 0xFFFFFFFF)
 
                 un[i + j] = UInt32(truncatingIfNeeded: t)
                 k = Int64(p >> 32) - (t >> 32)
