@@ -11,7 +11,7 @@ extension BigInteger {
      * q = (q_m q_{m-1} ... q0)
      * r = (r_{n - 1} ... r1 r0)
      *
-     * - version: 1.1 beta 1
+     * - version: 1.1 beta 2
      */
 
     private func nlz(_ x : UInt32) -> Int {
@@ -43,6 +43,11 @@ extension BigInteger {
 
         //compare dividend & divisor
         //TO-DO
+        
+        //for dividene < divisor
+        if m < n {
+            return ([0], u)
+        }
 
         //Special case one word divisor
         if n == 1 {
