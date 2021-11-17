@@ -10,6 +10,8 @@ extension BigInteger {
      * then this func will return:
      * q = (q_m q_{m-1} ... q0)
      * r = (r_{n - 1} ... r1 r0)
+     *
+     * - version: 1.1 beta 1
      */
 
     private func nlz(_ x : UInt32) -> Int {
@@ -46,13 +48,15 @@ extension BigInteger {
         if n == 1 {
             k = 0
             for j in (0 ..< m).reversed() {
-                q[j] = UInt32(truncatingIfNeeded: ((k << 32) + Int64(u[j])) / Int64(v[0]))
+                q[j] = UInt32(truncatingIfNeeded:
+                            ((k << 32) + Int64(u[j])) / Int64(v[0]))
                 k = ((k << 32) + Int64(u[j])) - Int64(q[j]) * Int64(v[0])
             }
             r.append(UInt32(k))
             return (q, r)
         }
 
+        //normalize v & n
         let s = nlz(v[n - 1])
         var vn = [UInt32](repeating: 0, count: n)
         for i in (1 ..< n).reversed() {
@@ -68,31 +72,45 @@ extension BigInteger {
         }
         un[0] = u[0] << s
 
+        //main loop
         for j in (0 ... m - n).reversed() {
-            var q_hat : UInt64 = ((UInt64(un[j + n]) << 32) + UInt64(un[j + n - 1])) / UInt64(vn[n - 1])
-            var r_hat : UInt64 = ((UInt64(un[j + n]) << 32) + UInt64(un[j + n - 1])) - q_hat * UInt64(vn[n - 1])
-            if (q_hat >= BASE) ||
-                (q_hat * UInt64(vn[n - 2]) > (UInt64(r_hat) << 32) + UInt64(un[j + n - 2])) {
-                while r_hat < BASE {
+            //compute estimate q_hat of q[j]
+            var q_hat : UInt64 =
+        ((UInt64(un[j + n]) << 32) + UInt64(un[j + n - 1])) / UInt64(vn[n - 1])
+            var r_hat : UInt64 =
+                ((UInt64(un[j + n]) << 32) + UInt64(un[j + n - 1])) -
+                    q_hat * UInt64(vn[n - 1])
+
+            //since the while loop changes q_hat & r_hat
+            //we need to re-check the condition
+            func getRunning() -> Bool {
+                return (q_hat >= BASE) ||
+                       (q_hat * UInt64(vn[n - 2]) >
+                            (UInt64(r_hat) << 32) + UInt64(un[j + n - 2]))
+            }
+            if getRunning() {
+                    q_hat -= 1
+                    r_hat += UInt64(vn[n - 1])
+                while r_hat < BASE && getRunning() {
                     q_hat -= 1
                     r_hat += UInt64(vn[n - 1])
                 }
             }
 
-            //m & s
+            //multiplication & subtraction
             k = 0
             for i in 0 ..< n {
                 p = q_hat * UInt64(vn[i])
                 t = Int64(un[i + j]) - k - Int64(p & 0xFFFFFFFF)
-
                 un[i + j] = UInt32(truncatingIfNeeded: t)
+
                 k = Int64(p >> 32) - (t >> 32)
             }
             t = Int64(un[j + n]) - k
             un[j + n] = UInt32(t)
 
-            q[j] = UInt32(q_hat)
-            if t < 0 {
+            q[j] = UInt32(q_hat) //store quotient digit
+            if t < 0 {           //if we subtracted too, add back
                 q[j] -= 1
                 k = 0
                 for i in 0 ..< n {
@@ -105,7 +123,8 @@ extension BigInteger {
         }
 
         for i in 0 ..< n {
-            r[i] = (un[i] >> s) | UInt32(truncatingIfNeeded: (UInt64(un[i + 1]) << (32 - s)))
+            r[i] = (un[i] >> s) |
+                   UInt32(truncatingIfNeeded: (UInt64(un[i + 1]) << (32 - s)))
         }
         r[n - 1] = un[n - 1] >> s
 
