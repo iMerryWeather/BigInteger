@@ -124,7 +124,7 @@ public struct BigInteger {
         var carry : UInt64 = 0
         for i in 0 ..< x.count {
             product = UInt64(x[i]) * UInt64(y) + carry
-            x[i] = UInt32(truncatingIfNeeded: product) // x[i] = product % (1 << 32)
+            x[i] = UInt32(truncatingIfNeeded: product) // x[i] = product%(1<<32)
             carry = product >> 32              // carry = product / (1 << 32)
         }
 
@@ -148,23 +148,50 @@ public struct BigInteger {
     }
 
     /*
-     * BigInteger to String
+     * Return the String representation of this BigInteger in decimal
      */
     public func toString() -> String {
-        var res = ""
+        var res = [String]()
+
+        //Translate number to String, a digit group at a time
+        var tmp = self
+        let longRadix = BigInteger(from: "1000000000000000000") //10 ** 18
+
+        while tmp.mag != [0] { //tmp != zero
+            var (q, r) = divide(mag1: tmp.mag, mag2: longRadix.mag)
+            (q, r) = (removeLeadingZeros(mag: q), removeLeadingZeros(mag: r))
+
+            tmp.mag = q
+
+            res.append(String(BigInteger(signum: true, mag: r).uint64Value()))
+        }
+
         if !signum {
-            res += "-"
+            res.append("-")
         }
-        /*
-         * Because we treat mag as a unsigned BASE-radix number, so we need to
-         * convert it to decimal to get a output.
-         * By intuition, if mag[i] is not the last term in mag array and doesn't
-         * consist of 10 digits, then it will
-         */
-        for i in mag.reversed() {
-            res += String(i)
+
+        var result = ""
+        for i in res.reversed() {
+            result += i
         }
-        return res
+        return result
+    }
+
+    /*
+     * Returns the specified uint64 value.
+     * We assume the self mag only have 2 elements.
+     * mag|                0               |               1                |
+     * bit|################################|################################|
+     *
+     * result = (mag[1] << 32) + mag[0]
+     */
+    public func uint64Value() -> UInt64 {
+        if mag.count == 0 {
+            return 0
+        } else if mag.count == 1 {
+            return UInt64(mag[0])
+        }
+        return (UInt64(mag[1]) << 32) + UInt64(mag[0])
     }
 
     /*
@@ -207,7 +234,7 @@ public struct BigInteger {
             if mag[i] == 0 {
                 mag.removeLast()
                 i -= 1
-                if i <= 0 { // if all zero
+                if i < 0 { // if all zero
                     mag = [0]
                     break
                 }
