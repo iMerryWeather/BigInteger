@@ -64,10 +64,25 @@ final class BigIntegerTests: XCTestCase {
         let b = BigInteger(from: "61935861237")
         let c = BigInteger(from: "523456612361193061935861237")
         let d = BigInteger(from: "500000000000000000000000000")
+
+        //hack, should be fixed in division(mag1:_, mag2:_) v1.1b1
+        let e = BigInteger(from: "612361193061935861237324234354353452352542352435435252435453")
+        let f = BigInteger(from: "1000000000000000000")
+        print("\(UInt32(truncatingIfNeeded: -587411230))")
+
+        XCTAssertEqual(e.divide(mag1: e.mag, mag2: f.mag).0, [4274521118, 267499566, 3951190577, 2438715792, 1799, 0])
         XCTAssertEqual(a.divide(mag1: a.mag, mag2: b.mag).0, [1297086930, 2])
         XCTAssertEqual(a.divide(mag1: a.mag, mag2: b.mag).1, [2341514747, 6])
         XCTAssertEqual(c.divide(mag1: c.mag, mag2: d.mag).0, [1])
         XCTAssertEqual(c.divide(mag1: c.mag, mag2: d.mag).1, [1192611317, 2164911735, 1271585])
+    }
+
+    func testToString() {
+        let a = BigInteger(from: "612361193061935861237")
+        XCTAssertEqual(a.toString(), "612361193061935861237")
+        let b = BigInteger(from: "-612361193061935861237324234354353452352542352435435252435453")
+        //                        612361193061935861237324234354353452352542352435435252435453
+        XCTAssertEqual(b.toString(), "-612361193061935861237324234354353452352542352435435252435453")
     }
 
     /*func testAdd() {
@@ -75,35 +90,5 @@ final class BigIntegerTests: XCTestCase {
         //let b = BigInteger(from: "-6123611930619358612362")
         XCTAssertEqual((a + a).mag, BigInteger(from: "1224722386123871722474").mag)
         XCTAssertEqual((a + a).signum, BigInteger(from: "1224722386123871722474").signum)
-    }*/
-
-    /*
-     * this test only starts with non-private func
-     * and included in init test.
-     */
-    /*func testPrivateRemoveLeadingZeros_arg_Array_UInt64() {
-        let a = BigInteger(from: "0000000000000000000000000000000000000612361193061935861237")
-        let b = BigInteger(from: "0000000000000000000000000000000000000000000000000000000000")
-        XCTAssertEqual(BigInteger.removeLeadingZeros(mag: a.mag),
-                       BigInteger(from: "612361193061935861237").mag)
-        XCTAssertEqual(BigInteger.removeLeadingZeros(mag: b.mag), [0])
-    }*/
-
-    /*
-     * this test only starts with non-private func
-     * and included in sub test.
-     */
-    /*func testPrivateComparAbs_arg_Array_UInt64_Array_UInt64() {
-        //not same length
-        let a = BigInteger(from: "0000000000000000000000000000000000000612361193061935861237")
-        let b = BigInteger(from: "0000000000000000000000000000000000000000000000000000000000")
-        XCTAssertEqual(BigInteger.compareAbs(mag1: a.mag, mag2: b.mag), true)
-        XCTAssertEqual(BigInteger.compareAbs(mag1: b.mag, mag2: a.mag), false)
-
-        //same length
-        let c = BigInteger(from: "193581935819358612361193061935861237")
-        let d = BigInteger(from: "193581935819358612361193061935861233")
-        XCTAssertEqual(BigInteger.compareAbs(mag1: c.mag, mag2: d.mag), true)
-        XCTAssertEqual(BigInteger.compareAbs(mag1: d.mag, mag2: c.mag), false)
     }*/
 }
