@@ -6,7 +6,7 @@ extension BigInteger {
      *
      * return true if mag1 ≥ mag2
      */
-    private func compareMag(mag1 : [UInt32], mag2 : [UInt32]) -> Bool {
+    static func compareMag(mag1 : [UInt32], mag2 : [UInt32]) -> Bool {
         let mag1 = removeLeadingZeros(mag: mag1)
         let mag2 = removeLeadingZeros(mag: mag2)
 

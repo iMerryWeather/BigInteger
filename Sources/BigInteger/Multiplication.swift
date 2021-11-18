@@ -30,6 +30,6 @@ extension BigInteger {
             res[m + n - 1] = UInt32(truncatingIfNeeded: carry)
         }
 
-        return removeLeadingZeros(mag: res)
+        return BigInteger.removeLeadingZeros(mag: res)
     }
 }

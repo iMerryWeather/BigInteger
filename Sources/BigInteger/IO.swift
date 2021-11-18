@@ -13,7 +13,8 @@ extension BigInteger {
 
         while tmp.mag != [0] { //tmp != zero
             var (q, r) = divide(mag1: tmp.mag, mag2: uint64Radix.mag)
-            (q, r) = (removeLeadingZeros(mag: q), removeLeadingZeros(mag: r))
+            (q, r) = (BigInteger.removeLeadingZeros(mag: q),
+                      BigInteger.removeLeadingZeros(mag: r))
 
             tmp.mag = q
 

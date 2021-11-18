@@ -48,7 +48,7 @@ extension BigInteger {
      * See Knuth, Donald,  _The Art of Computer Programming_, Vol. 2, (4.3)
      */
 
-    func subtract(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
+    static func subtract(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
         var mag2 = mag2
         //Add zeros if two mags don't have same length
         if mag1.count > mag2.count {
@@ -68,7 +68,7 @@ extension BigInteger {
             borrow = delta >> 32
         }
 
-        return removeLeadingZeros(mag: res) //when a - a = 0, shrink mag to [0]
+        return BigInteger.removeLeadingZeros(mag: res) //when a - a = 0, shrink mag to [0]
     }
 }
 
@@ -86,13 +86,17 @@ extension BigInteger {
      *     -   |   -   |     c = -(|a| + |b|) //case 4
      */
     private static func add(lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        var lhs = lhs
+        var rhs = rhs
         if lhs.signum && rhs.signum { //case 1
             return BigInteger(signum: true,
                               mag: add(mag1: lhs.mag, mag2: rhs.mag))
         } else if lhs.signum && (!rhs.signum) { //case 2
-            return BigInteger(signum: true, mag: [0])
+            rhs.negate()
+            return lhs - rhs
         } else if (!lhs.signum) && rhs.signum { //case 3
-            return BigInteger(signum: true, mag: [0])
+            lhs.negate()
+            return rhs - lhs
         } else { //case 4
             return BigInteger(signum: false,
                               mag: add(mag1: lhs.mag, mag2: rhs.mag))
@@ -100,7 +104,7 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers
+//Operator wrappers +
 extension BigInteger {
     public static func + (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return add(lhs: lhs, rhs: rhs)
@@ -109,5 +113,53 @@ extension BigInteger {
 
 //Subtract two BigIntegers
 extension BigInteger {
+    /*
+     * Sub two BigInteger
+     * We use |a| to represent mag of a here.
+     *
+     *     a   |   b   |        c
+     *   sign1 | sign2 |      result
+     *   ------|-------|-----------------
+     *     +   |   +   |     c = |a| - |b|                      //case 1
+     *     +   |   -   |     c = |a| + |b|                      //case 2, go add
+     *     -   |   +   |     c = (-|a|) - (+|b|) = -(|a| + |b|) //case 3, go add
+     *     -   |   -   |     c = -(|a|) - (-|b|) = |b| - |a|    //case 4
+     * In subtractMag(), we need to make sure always big - small
+     */
+    private static func subtract(lhs : BigInteger, rhs : BigInteger)
+                        -> BigInteger {
+        var rhs = rhs
+        var c : BigInteger
+        if lhs.signum && rhs.signum {
+            if BigInteger.compareMag(mag1: lhs.mag, mag2: rhs.mag) { //gets a-b
+                c = BigInteger(signum: true, mag: subtract(mag1: lhs.mag,
+                                                           mag2: rhs.mag))
+            } else { //gets -(b - a)
+                c = BigInteger(signum: false, mag: subtract(mag1: rhs.mag,
+                                                            mag2: lhs.mag))
+            }
+        } else if lhs.signum && !rhs.signum {
+            rhs.negate()
+            return lhs + rhs
+        } else if !lhs.signum && rhs.signum {
+            rhs.negate()
+            return lhs + rhs
+        } else {
+            if BigInteger.compareMag(mag1: rhs.mag, mag2: lhs.mag) { //gets b-a
+                c = BigInteger(signum: true, mag: subtract(mag1: rhs.mag,
+                                                           mag2: lhs.mag))
+            } else { //gets -(a - b)
+                c = BigInteger(signum: false, mag: subtract(mag1: lhs.mag,
+                                                            mag2: rhs.mag))
+            }
+        }
+        return c
+    }
+}
 
+//Operator wrappers -
+extension BigInteger {
+    public static func - (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        return subtract(lhs: lhs, rhs: rhs)
+    }
 }

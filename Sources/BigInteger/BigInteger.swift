@@ -113,7 +113,7 @@ public struct BigInteger {
 
         //remove leading zeros
         //caused by over-allocate, we do it unconditionally.
-        mag = removeLeadingZeros(mag: mag)
+        mag = BigInteger.removeLeadingZeros(mag: mag)
     }
 
     // Multiply x array times word y in place, and add word z
@@ -168,7 +168,7 @@ public struct BigInteger {
     /*
      * remove all leading zeros, if mag is all zero, mag will equal [0]
      */
-    func removeLeadingZeros(mag : [UInt32]) -> [UInt32] {
+    static func removeLeadingZeros(mag : [UInt32]) -> [UInt32] {
         var mag = mag
         if mag.last != nil {
             if mag.last != 0 { // the most-significant int of the magnitude
@@ -198,38 +198,7 @@ public struct BigInteger {
      * if a is a BigInteger, then a.negate() will gets
      *  value = -a
      */
-    /*private mutating func negate() {
+    mutating func negate() {
         self.signum = !self.signum
-    }*/
-
-    /*
-     * Sub two BigInteger
-     * compare first
-     * always big - small
-     *
-     *     a   |   b   |        c
-     *   sign1 | sign2 |      result
-     *   ------|-------|-----------------
-     *     +   |   +   |     c = |a| - |b|
-     *     +   |   -   |     c = |a| + |b|
-     *     -   |   +   |     c = (-|a|) - (+|b|) = -(|a| + |b|)
-     *     -   |   -   |     c = -(|a| + |b|)
-     */
-    /*private func sub(rhs : BigInteger) -> BigInteger {
-        var c : BigInteger
-        if self.signum && rhs.signum {
-            if BigInteger.compareAbs(mag1: self.mag, mag2: rhs.mag) { // a >= b
-                c = BigInteger(signum: true, mag: sub(mag1: self.mag, mag2: rhs.mag))
-            } else {
-                c = BigInteger(signum: false, mag: sub(mag1: rhs.mag, mag2: self.mag))
-            }
-        } else if self.signum && !rhs.signum {
-            c = BigInteger(signum: true, mag: add(mag1: self.mag, mag2: rhs.mag))
-        } else if !self.signum && rhs.signum {
-            c = BigInteger(from: "0")
-        } else {
-            c = BigInteger(from: "0")
-        }
-        return c
-    }*/
+    }
 }
