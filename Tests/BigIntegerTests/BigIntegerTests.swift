@@ -69,11 +69,11 @@ final class BigIntegerTests: XCTestCase {
         let e = BigInteger(from: "612361193061935861237324234354353452352542352435435252435453")
         let f = BigInteger(from: "1000000000000000000")
 
-        XCTAssertEqual(e.divide(mag1: e.mag, mag2: f.mag).0, [4274521118, 267499566, 3951190577, 2438715792, 1799, 0])
-        XCTAssertEqual(a.divide(mag1: a.mag, mag2: b.mag).0, [1297086930, 2])
-        XCTAssertEqual(a.divide(mag1: a.mag, mag2: b.mag).1, [2341514747, 6])
-        XCTAssertEqual(c.divide(mag1: c.mag, mag2: d.mag).0, [1])
-        XCTAssertEqual(c.divide(mag1: c.mag, mag2: d.mag).1, [1192611317, 2164911735, 1271585])
+        XCTAssertEqual(BigInteger.divide(mag1: e.mag, mag2: f.mag).0, [4274521118, 267499566, 3951190577, 2438715792, 1799, 0])
+        XCTAssertEqual(BigInteger.divide(mag1: a.mag, mag2: b.mag).0, [1297086930, 2])
+        XCTAssertEqual(BigInteger.divide(mag1: a.mag, mag2: b.mag).1, [2341514747, 6])
+        XCTAssertEqual(BigInteger.divide(mag1: c.mag, mag2: d.mag).0, [1])
+        XCTAssertEqual(BigInteger.divide(mag1: c.mag, mag2: d.mag).1, [1192611317, 2164911735, 1271585])
     }
 
     func testStringConvertible() {
@@ -116,5 +116,13 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(a * b), "-3749862307682374847564897134347193704811794")
         XCTAssertEqual(String(a * a), "374986230768237484756979602389168919170169")
         XCTAssertEqual(String(a * BigInteger(from: "0")), "0")
+    }
+
+    func testDivide() {
+        let a = BigInteger(from: "612361193061935861237")
+        let b = BigInteger(from: "-6123611930619358612362")
+        XCTAssertEqual(String(a / a), "1")
+        XCTAssertEqual(String(a / b), "0")
+        XCTAssertEqual(String(b / a), "-9")
     }
 }

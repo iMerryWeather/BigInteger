@@ -14,7 +14,7 @@ extension BigInteger {
      * - version: 1.1 beta 2
      */
 
-    private func nlz(_ x : UInt32) -> Int {
+    private static func nlz(_ x : UInt32) -> Int {
         var x = x
         var n = 0
         if x == 0 { return 32 }
@@ -27,7 +27,7 @@ extension BigInteger {
         return n
     }
 
-    func divide(mag1 : [UInt32], mag2 : [UInt32]) -> ([UInt32], [UInt32]) {
+    static func divide(mag1 : [UInt32], mag2 : [UInt32]) -> ([UInt32], [UInt32]) {
         let u = mag1
         let v = mag2
         //calculate m & n first
@@ -43,10 +43,15 @@ extension BigInteger {
 
         //compare dividend & divisor
         //TO-DO
-        
-        //for dividene < divisor
+
+        //for dividend < divisor
         if m < n {
             return ([0], u)
+        }
+        
+        //for same dividend & divisor
+        if u == v {
+            return([1], [0])
         }
 
         //Special case one word divisor
@@ -134,5 +139,32 @@ extension BigInteger {
         r[n - 1] = un[n - 1] >> s
 
         return (q, r)
+    }
+}
+
+//Divide two BigIntegers
+extension BigInteger {
+    /*
+     * Divide two BigInteger
+     * We use |a| to represent mag of a here.
+     *     a   |   b   |        c
+     *   sign1 | sign2 |      result
+     *   ------|-------|-----------------
+     *     +   |   +   |     c = |a| / |b|    //case 1a
+     *     +   |   -   |     c = -(|a| / |b|) //case 2a
+     *     -   |   +   |     c = -(|a| / |b|) //case 2b
+     *     -   |   -   |     c = (|a| / |b|)  //case 1b
+     */
+    private static func divide(lhs : BigInteger, rhs : BigInteger)
+                        -> BigInteger {
+        return BigInteger(signum: lhs.signum == rhs.signum,
+                              mag: divide(mag1: lhs.mag, mag2: rhs.mag).0)
+    }
+}
+
+//Operator wrappers /
+extension BigInteger {
+    public static func / (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        return divide(lhs: lhs, rhs: rhs)
     }
 }

@@ -8,7 +8,7 @@ public struct BigInteger {
     /*
      *
      */
-    let BASE : UInt64 = 4294967296 // 1 << 32
+    static let BASE : UInt64 = 4294967296 // 1 << 32
 
     /*
      * The following two values are used for fast String conversions.
