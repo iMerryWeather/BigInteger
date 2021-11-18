@@ -71,3 +71,36 @@ extension BigInteger {
         return removeLeadingZeros(mag: res) //when a - a = 0, shrink mag to [0]
     }
 }
+
+//Add two BigIntegers
+extension BigInteger {
+    /*
+     * Add two BigInteger
+     * We use |a| to represent mag of a here.
+     *     a   |   b   |        c
+     *   sign1 | sign2 |      result
+     *   ------|-------|-----------------
+     *     +   |   +   |     c = |a| + |b|    //case 1
+     *     +   |   -   |     c = |a| - |b|    //case 2, go subtract
+     *     -   |   +   |     c = |b| - |a|    //case 3, go subtract
+     *     -   |   -   |     c = -(|a| + |b|) //case 4
+     */
+    private func add(lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        if lhs.signum && rhs.signum { //case 1
+            return BigInteger(signum: true,
+                              mag: add(mag1: lhs.mag, mag2: rhs.mag))
+        } else if lhs.signum && (!rhs.signum) { //case 2
+
+        } else if (!lhs.signum) && rhs.signum { //case 3
+
+        } else { //case 4
+            return BigInteger(signum: false,
+                              mag: add(mag1: lhs.mag, mag2: rhs.mag))
+        }
+    }
+}
+
+//Subtract two BigIntegers
+extension BigInteger {
+
+}

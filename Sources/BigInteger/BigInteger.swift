@@ -166,28 +166,6 @@ public struct BigInteger {
     }
 
     /*
-     * Add two BigInteger
-     *     a   |   b   |        c
-     *   sign1 | sign2 |      result
-     *   ------|-------|-----------------
-     *     +   |   +   |     c = a + b
-     *     +   |   -   |     c = a - b
-     *     -   |   +   |     c = b - a
-     *     -   |   -   |     c = -(a + b)
-     */
-    /*private func add(rhs : BigInteger) -> BigInteger {
-        if self.signum && rhs.signum { //c = a + b
-            return BigInteger(signum: true, mag: add(mag1: self.mag, mag2: rhs.mag))
-        } else if self.signum && (!rhs.signum) { //c = a - b
-            return self.sub(rhs: rhs)
-        } else if (!self.signum) && rhs.signum { // c = b - a
-            return rhs.sub(rhs: self)
-        } else {
-            return BigInteger(signum: false, mag: add(mag1: self.mag, mag2: rhs.mag))
-        }
-    }*/
-
-    /*
      * remove all leading zeros, if mag is all zero, mag will equal [0]
      */
     func removeLeadingZeros(mag : [UInt32]) -> [UInt32] {
@@ -215,31 +193,6 @@ public struct BigInteger {
         }
         return mag
     }
-
-    /*
-     * (check leading zeros first)
-     * 1) Longer is bigger
-     * 2) if both have the same length, then compare from index 0.
-     *
-     * return true if mag1 ≥ mag2
-     */
-    /*private static func compareAbs(mag1 : [UInt64], mag2 : [UInt64]) -> Bool {
-        let mag1 = BigInteger.removeLeadingZeros(mag: mag1)
-        let mag2 = BigInteger.removeLeadingZeros(mag: mag2)
-
-        //Longer is bigger
-        if mag1.count != mag2.count {
-            return mag1.count > mag2.count
-        }
-
-        //compare from 0 to count
-        for i in 0 ..< mag1.count {
-            if mag1[i] < mag2[i] {
-                return false
-            }
-        }
-        return true
-    }*/
 
     /*
      * if a is a BigInteger, then a.negate() will gets
@@ -279,21 +232,4 @@ public struct BigInteger {
         }
         return c
     }*/
-}
-
-// MARK: - Operators
-extension BigInteger {
-    /*
-     * A wrapper of add
-     */
-    /*static func + (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
-        return lhs.add(rhs: rhs)
-    }*/
-
-    /*
-     * A wrapper of sub
-     */
-    // static func - (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
-    //     return lhs.sub(mag:)
-    // }
 }
