@@ -6,6 +6,11 @@ extension BigInteger {
     func toString() -> String {
         var res = [String]()
 
+        //Special zero case
+        if self.mag == [0] {
+            return "0"
+        }
+
         //Translate number to String, a digit group at a time
         var tmp = self
         //maybe init(val : UInt64) is better
