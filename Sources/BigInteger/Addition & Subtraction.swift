@@ -6,7 +6,7 @@ extension BigInteger {
      * Knuth's Algorithm A
      * See Knuth, Donald,  _The Art of Computer Programming_, Vol. 2, (4.3)
      */
-    func add(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
+    static func add(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
         var mag1 = mag1
         var mag2 = mag2
         //Add zeros if two mags don't have same length
@@ -85,18 +85,25 @@ extension BigInteger {
      *     -   |   +   |     c = |b| - |a|    //case 3, go subtract
      *     -   |   -   |     c = -(|a| + |b|) //case 4
      */
-    private func add(lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+    private static func add(lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         if lhs.signum && rhs.signum { //case 1
             return BigInteger(signum: true,
                               mag: add(mag1: lhs.mag, mag2: rhs.mag))
         } else if lhs.signum && (!rhs.signum) { //case 2
-
+            return BigInteger(signum: true, mag: [0])
         } else if (!lhs.signum) && rhs.signum { //case 3
-
+            return BigInteger(signum: true, mag: [0])
         } else { //case 4
             return BigInteger(signum: false,
                               mag: add(mag1: lhs.mag, mag2: rhs.mag))
         }
+    }
+}
+
+//Operator wrappers
+extension BigInteger {
+    public static func + (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        return add(lhs: lhs, rhs: rhs)
     }
 }
 

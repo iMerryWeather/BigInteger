@@ -24,11 +24,11 @@ final class BigIntegerTests: XCTestCase {
         let c = BigInteger(from: "523456612361193061935861237")
         //d_mag = [1946157056, 1340620830, 27105054]
         let d = BigInteger(from: "500000000000000000000000000")
-        XCTAssertEqual(a.add(mag1: a.mag, mag2: b.mag),
+        XCTAssertEqual(BigInteger.add(mag1: a.mag, mag2: b.mag),
                        [2931821546, 842529975, 33])
-        XCTAssertEqual(c.add(mag1: c.mag, mag2: c.mag),
+        XCTAssertEqual(BigInteger.add(mag1: c.mag, mag2: c.mag),
                        [1982569450, 2716097835, 56753279])
-        XCTAssertEqual(c.add(mag1: d.mag, mag2: d.mag),
+        XCTAssertEqual(BigInteger.add(mag1: d.mag, mag2: d.mag),
                        [3892314112, 2681241660, 54210108])
 
     }
@@ -84,10 +84,10 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(b), "-612361193061935861237324234354353452352542352435435252435453")
     }
 
-    /*func testAdd() {
+    func testAdd() {
         let a = BigInteger(from: "0000000000000000000000000000000000000612361193061935861237")
         //let b = BigInteger(from: "-6123611930619358612362")
         XCTAssertEqual((a + a).mag, BigInteger(from: "1224722386123871722474").mag)
         XCTAssertEqual((a + a).signum, BigInteger(from: "1224722386123871722474").signum)
-    }*/
+    }
 }
