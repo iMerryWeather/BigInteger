@@ -20,6 +20,7 @@ public struct BigInteger {
      * a UInt32 without overflowing.
      */
     let DIGITS_PER_INT = 9
+    let longRadix : UInt64 = 0xde0b6b3a7640000 // 10 ** 18
 
     /*
      * bitsPerDigit in the decimal times 1024. (1 << 10)
@@ -142,39 +143,9 @@ public struct BigInteger {
     /*
      * Construct a BigInteger by given signum & mag
      */
-    private init(signum : Bool, mag : [UInt32]) {
+    init(signum : Bool, mag : [UInt32]) {
         self.signum = signum
         self.mag = mag
-    }
-
-    /*
-     * Return the String representation of this BigInteger in decimal
-     */
-    public func toString() -> String {
-        var res = [String]()
-
-        //Translate number to String, a digit group at a time
-        var tmp = self
-        let longRadix = BigInteger(from: "1000000000000000000") //10 ** 18
-
-        while tmp.mag != [0] { //tmp != zero
-            var (q, r) = divide(mag1: tmp.mag, mag2: longRadix.mag)
-            (q, r) = (removeLeadingZeros(mag: q), removeLeadingZeros(mag: r))
-
-            tmp.mag = q
-
-            res.append(String(BigInteger(signum: true, mag: r).uint64Value()))
-        }
-
-        if !signum {
-            res.append("-")
-        }
-
-        var result = ""
-        for i in res.reversed() {
-            result += i
-        }
-        return result
     }
 
     /*
