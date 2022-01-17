@@ -117,7 +117,7 @@ extension BigInteger {
                 k = Int64(p >> 32) - (t >> 32)
             }
             t = Int64(un[j + n]) - k
-            un[j + n] = UInt32(t)
+            un[j + n] = UInt32(bitPattern: Int32(t))
 
             q[j] = UInt32(q_hat) //store quotient digit
             if t < 0 {           //if we subtracted too, add back
@@ -125,10 +125,10 @@ extension BigInteger {
                 k = 0
                 for i in 0 ..< n {
                     t = Int64(un[i + j]) + Int64(vn[i]) + k
-                    un[i + j] = UInt32(t)
+                    un[i + j] = UInt32(truncatingIfNeeded: t)
                     k = t >> 32
                 }
-                un[j + n] += UInt32(k)
+                un[j + n] &+= UInt32(k)
             }
         }
 
