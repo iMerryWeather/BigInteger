@@ -201,6 +201,14 @@ public struct BigInteger {
      */
     static func removeLeadingZeros(_ n : String) -> String {
         //the input should be like: 0000012321312313121323...
+        var n = n
+        let isNegative = n.first! == "-" ? true : false
+        
+        // if is negative we skip the minus sign
+        if isNegative {
+            n.removeFirst()
+        }
+        
         var beforeFirstNonZero = n.startIndex
         for i in n {
             beforeFirstNonZero = n.index(after: beforeFirstNonZero)
@@ -209,7 +217,8 @@ public struct BigInteger {
                 break
             }
         }
-        return String(n[beforeFirstNonZero ..< n.endIndex])
+        let ans = String(n[beforeFirstNonZero ..< n.endIndex])
+        return isNegative ? "-" + ans : ans
     }
 
     /*

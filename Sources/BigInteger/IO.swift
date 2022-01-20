@@ -26,10 +26,6 @@ extension BigInteger {
             res.append(String(BigInteger(signum: true, mag: r).uint64Value()))
         }
 
-        if !signum {
-            res.append("-")
-        }
-
         var result = ""
         for i in res.reversed() {
             var i = i
@@ -41,7 +37,8 @@ extension BigInteger {
             }
             result += i
         }
-        return BigInteger.removeLeadingZeros(result)
+        
+        return BigInteger.removeLeadingZeros(!signum ? "-" + result : result)
     }
 }
 
