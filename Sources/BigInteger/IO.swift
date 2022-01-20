@@ -39,7 +39,6 @@ extension BigInteger {
                     i = "0" + i //A fast way may needed here.
                 }
             }
-            print(i)
             result += i
         }
         return BigInteger.removeLeadingZeros(result)
