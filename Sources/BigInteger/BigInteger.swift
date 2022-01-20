@@ -193,6 +193,24 @@ public struct BigInteger {
         }
         return mag
     }
+    
+    /*
+     * Remove all leading zeros for a string representation of BigInteger. And
+     * in current version we are not going to check wheather the input is legel
+     * or not.
+     */
+    static func removeLeadingZeros(_ n : String) -> String {
+        //the input should be like: 0000012321312313121323...
+        var beforeFirstNonZero = n.startIndex
+        for i in n {
+            beforeFirstNonZero = n.index(after: beforeFirstNonZero)
+            if i != "0" {
+                beforeFirstNonZero = n.index(before: beforeFirstNonZero)
+                break
+            }
+        }
+        return String(n[beforeFirstNonZero ..< n.endIndex])
+    }
 
     /*
      * if a is a BigInteger, then a.negate() will gets
