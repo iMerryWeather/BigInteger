@@ -32,9 +32,17 @@ extension BigInteger {
 
         var result = ""
         for i in res.reversed() {
+            var i = i
+            //Pad with internal zeros if necessary.
+            if i.count < 18 {
+                for _ in i.count ..< 18 {
+                    i = "0" + i //A fast way may needed here.
+                }
+            }
+            print(i)
             result += i
         }
-        return result
+        return BigInteger.removeLeadingZeros(result)
     }
 }
 
