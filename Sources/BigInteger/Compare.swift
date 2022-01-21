@@ -15,10 +15,10 @@ extension BigInteger {
             return mag1.count > mag2.count
         }
 
-        //compare from 0 to count
-        for i in 0 ..< mag1.count {
-            if mag1[i] < mag2[i] {
-                return false
+        //compare from high to low
+        for i in (0 ..< mag1.count).reversed() {
+            if mag1[i] != mag2[i] {
+                return !(mag1[i] < mag2[i]) //#!#
             }
         }
         return true
