@@ -222,7 +222,7 @@ public struct BigInteger {
     }
 
     /*
-     * if a is a BigInteger, then a.negate() will gets
+     * if a is a BigInteger, then a.negate() will get
      *  value = -a
      */
     mutating func negate() {

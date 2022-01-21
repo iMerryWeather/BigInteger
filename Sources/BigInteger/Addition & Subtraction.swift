@@ -123,14 +123,14 @@ extension BigInteger {
      *     +   |   +   |     c = |a| - |b|                      //case 1
      *     +   |   -   |     c = |a| + |b|                      //case 2, go add
      *     -   |   +   |     c = (-|a|) - (+|b|) = -(|a| + |b|) //case 3, go add
-     *     -   |   -   |     c = -(|a|) - (-|b|) = |b| - |a|    //case 4
+     *     -   |   -   |     c = (-|a|) - (-|b|) = |b| - |a|    //case 4
      * In subtractMag(), we need to make sure always big - small
      */
     private static func subtract(lhs : BigInteger, rhs : BigInteger)
                         -> BigInteger {
         var rhs = rhs
         var c : BigInteger
-        if lhs.signum && rhs.signum {
+        if lhs.signum && rhs.signum {                                //a > b
             if BigInteger.compareMag(mag1: lhs.mag, mag2: rhs.mag) { //gets a-b
                 c = BigInteger(signum: true, mag: subtract(mag1: lhs.mag,
                                                            mag2: rhs.mag))
@@ -138,19 +138,17 @@ extension BigInteger {
                 c = BigInteger(signum: false, mag: subtract(mag1: rhs.mag,
                                                             mag2: lhs.mag))
             }
-        } else if lhs.signum && !rhs.signum {
+        } else if (lhs.signum && !rhs.signum) ||
+                  (!lhs.signum && rhs.signum)    {
             rhs.negate()
             return lhs + rhs
-        } else if !lhs.signum && rhs.signum {
-            rhs.negate()
-            return lhs + rhs
-        } else {
-            if BigInteger.compareMag(mag1: rhs.mag, mag2: lhs.mag) { //gets b-a
-                c = BigInteger(signum: true, mag: subtract(mag1: rhs.mag,
-                                                           mag2: lhs.mag))
-            } else { //gets -(a - b)
-                c = BigInteger(signum: false, mag: subtract(mag1: lhs.mag,
-                                                            mag2: rhs.mag))
+        } else {                                                     //a > b
+            if BigInteger.compareMag(mag1: lhs.mag, mag2: rhs.mag) { //gets a-b
+                c = BigInteger(signum: false,                     // minus sign
+                               mag: subtract(mag1: lhs.mag, mag2: rhs.mag))
+            } else { //a < b, just return b - a
+                c = BigInteger(signum: true,
+                               mag: subtract(mag1: rhs.mag, mag2: lhs.mag))
             }
         }
         return c
