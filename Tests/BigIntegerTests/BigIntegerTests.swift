@@ -140,6 +140,22 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(a + minusB), String(Python.int(x) - Python.int(y)))
     }
     
+    func testSubtractT2() {
+        let bigNumA = getRandomNum(withCount: 2048)
+        let bigNumB = getRandomNum(withCount: 2048)
+        let a = BigInteger(from: bigNumA)
+        let b = BigInteger(from: bigNumB)
+        let ma = BigInteger(from: "-" + bigNumA)
+        let mb = BigInteger(from: "-" + bigNumB)
+        var x : PythonObject = bigNumA.pythonObject
+        let y : PythonObject = bigNumB.pythonObject
+        
+        XCTAssertEqual(String(a - b), String(Python.int(x) - Python.int(y)))
+        x = ("-" + bigNumA).pythonObject
+        print(BigInteger.compareMag(mag1: a.mag, mag2: b.mag))
+        XCTAssertEqual(String(ma - mb), String(Python.int(x) + Python.int(y)))
+    }
+    
     //Return a n size positive test number
     func getRandomNum(withCount n : Int) -> String {
         var result = ""
