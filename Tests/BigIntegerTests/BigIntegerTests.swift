@@ -152,8 +152,33 @@ final class BigIntegerTests: XCTestCase {
         
         XCTAssertEqual(String(a - b), String(Python.int(x) - Python.int(y)))
         x = ("-" + bigNumA).pythonObject
-        print(BigInteger.compareMag(mag1: a.mag, mag2: b.mag))
         XCTAssertEqual(String(ma - mb), String(Python.int(x) + Python.int(y)))
+    }
+    
+    func testMultiplyT2() {
+        let bigNumA = getRandomNum(withCount: 2048)
+        let bigNumB = getRandomNum(withCount: 2048)
+        var a = BigInteger(from: bigNumA)
+        let b = BigInteger(from: bigNumB)
+        var x : PythonObject = bigNumA.pythonObject
+        let y : PythonObject = bigNumB.pythonObject
+        
+        XCTAssertEqual(String(a * b), String(Python.int(x) * Python.int(y)))
+        x = ("-" + bigNumA).pythonObject
+        a = BigInteger(from: "-" + bigNumA)
+        XCTAssertEqual(String(a * b), String(Python.int(x) * Python.int(y)))
+    }
+    
+    func testDivideT2() {
+        let bigNumA = getRandomNum(withCount: 2048)
+        let bigNumB = getRandomNum(withCount: 256)
+        let a = BigInteger(from: bigNumA)
+        let b = BigInteger(from: bigNumB)
+        let x : PythonObject = bigNumA.pythonObject
+        let y : PythonObject = bigNumB.pythonObject
+        
+        //Python's division for negative number is not the same here.
+        XCTAssertEqual(String(a / b), String(Python.divmod(Python.int(x), Python.int(y)).tuple2.0))
     }
     
     //Return a n size positive test number
