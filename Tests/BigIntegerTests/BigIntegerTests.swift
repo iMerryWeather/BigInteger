@@ -181,6 +181,18 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(a / b), String(Python.divmod(Python.int(x), Python.int(y)).tuple2.0))
     }
     
+    func testModT2() {
+        let bigNumA = getRandomNum(withCount: 2048)
+        let bigNumB = getRandomNum(withCount: 1024)
+        let a = BigInteger(from: bigNumA)
+        let b = BigInteger(from: bigNumB)
+        let x : PythonObject = bigNumA.pythonObject
+        let y : PythonObject = bigNumB.pythonObject
+        
+        //Python's division for negative number is not the same here.
+        XCTAssertEqual(String(a % b), String(Python.divmod(Python.int(x), Python.int(y)).tuple2.1))
+    }
+    
     //Return a n size positive test number
     func getRandomNum(withCount n : Int) -> String {
         var result = ""
