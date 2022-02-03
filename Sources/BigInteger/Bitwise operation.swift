@@ -37,4 +37,39 @@ extension BigInteger {
         }
         return res
     }
+    
+    /*
+     * Returns the index of the int that contains the first nonzero int in the
+     * little-endian binary representation of the magnitude (int 0 is the
+     * least significant).
+     */
+    private func firstNonzeroIntNum() -> Int {
+        var res = 0
+        var i = mag.count - 1
+        while i >= 0 && mag[i] == 0 {
+            res = mag.count - i - 1
+            i -= 1
+        }
+        return res
+    }
+    
+    /*
+     * Returns the specified int of the little-endian two's complement
+     * representation (int 0 is the least significant).  The int number can
+     * be arbitrarily high (values are logically preceded by infinitely many
+     * sign ints).
+     */
+    private func getInt(_ n : Int) -> UInt32 {
+        if n < 0 {
+            return 0
+        }
+        if n >= mag.count {
+            return signum ? 0 : UInt32.max // -1
+        }
+
+        let magInt = mag[mag.count - n - 1]
+
+        return (signum ? magInt :
+                (n <= firstNonzeroIntNum() ? (~magInt) + 1 : ~magInt))
+    }
 }
