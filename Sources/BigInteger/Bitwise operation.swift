@@ -6,7 +6,38 @@
 //
 
 extension BigInteger {
+    /*
+     * Returns a BigInteger whose value is lhs & rhs.  (This function returns
+     * a negative BigInteger if and only if this and val are both negative.)
+     */
+    private static func and(lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        var lhs = lhs
+        var rhs = rhs
+        var res = [UInt32]()
+        let count = max(lhs.mag.count, rhs.mag.count)
+        if !lhs.signum {
+            lhs.mag.twosComplement()
+        }
+        if !rhs.signum {
+            rhs.mag.twosComplement()
+        }
+        for i in 0 ..< count {
+            res.append(lhs.mag[i] & rhs.mag[i])
+        }
+        //both negative, which means `res` is negative
+        if !lhs.signum && !rhs.signum {
+            res.twosComplement()
+            return BigInteger(signum: false, mag: res)
+        }
+        return BigInteger(signum: true, mag: res)
+    }
+}
 
+//Operator wrappers &
+extension BigInteger {
+    public static func & (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        return and(lhs: lhs, rhs: rhs)
+    }
 }
 
 /*
