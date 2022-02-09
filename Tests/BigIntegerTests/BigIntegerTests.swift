@@ -193,20 +193,6 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(a % b), String(Python.divmod(Python.int(x), Python.int(y)).tuple2.1))
     }
     
-    func testBitLength() {
-        let math = Python.import("math")
-        let bigNum = getRandomNum(withCount: 2048)
-        let a = BigInteger(from: bigNum)
-        let x : PythonObject = bigNum.pythonObject
-        let y : PythonObject = -1 * Python.pow(2, 2048)
-        let b = BigInteger(from: y.description)
-        let c = BigInteger(from: "-" + bigNum)
-        
-        XCTAssertEqual(a.bitLength(), Int(math.ceil(math.log2(Python.int(x)))))
-        XCTAssertEqual(b.bitLength(), Int(math.ceil(math.log2(-Python.int(y)))))
-        XCTAssertEqual(c.bitLength(), Int(math.ceil(math.log2(Python.int(x)))))
-    }
-    
     //Return a n size positive test number
     func getRandomNum(withCount n : Int) -> String {
         var result = ""
