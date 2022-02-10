@@ -221,16 +221,29 @@ final class BigIntegerTests: XCTestCase {
         var x : PythonObject = bigNumA.pythonObject
         var y : PythonObject = bigNumB.pythonObject
         
-        //positive AND positive
+        //positive OR positive
         XCTAssertEqual(String(a | b), String(Python.int(x) | Python.int(y)))
         x = ("-" + bigNumA).pythonObject
         a = BigInteger(from: "-" + bigNumA)
-        //negative AND positive
+        //negative OR positive
         XCTAssertEqual(String(a | b), String(Python.int(x) | Python.int(y)))
         y = ("-" + bigNumB).pythonObject
         b = BigInteger(from: "-" + bigNumB)
-        //negative AND negative
+        //negative OR negative
         XCTAssertEqual(String(a | b), String(Python.int(x) | Python.int(y)))
+    }
+    
+    func testNot() {
+        let bigNum = getRandomNum(withCount: 2048)
+        var a = BigInteger(from: bigNum)
+        var x : PythonObject = bigNum.pythonObject
+        
+        //positive NOT
+        XCTAssertEqual(String(~a), String(~Python.int(x)))
+        x = ("-" + bigNum).pythonObject
+        a = BigInteger(from: "-" + bigNum)
+        //negative NOT
+        XCTAssertEqual(String(~a), String(~Python.int(x)))
     }
     
     //Return a n size positive test number
