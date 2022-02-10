@@ -246,6 +246,26 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(~a), String(~Python.int(x)))
     }
     
+    func testXor() {
+        let bigNumA = getRandomNum(withCount: 2048)
+        let bigNumB = getRandomNum(withCount: 2048)
+        var a = BigInteger(from: bigNumA)
+        var b = BigInteger(from: bigNumB)
+        var x : PythonObject = bigNumA.pythonObject
+        var y : PythonObject = bigNumB.pythonObject
+        
+        //positive XOR positive
+        XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
+        x = ("-" + bigNumA).pythonObject
+        a = BigInteger(from: "-" + bigNumA)
+        //negative XOR positive
+        XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
+        y = ("-" + bigNumB).pythonObject
+        b = BigInteger(from: "-" + bigNumB)
+        //negative XOR negative
+        XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
+    }
+    
     //Return a n size positive test number
     func getRandomNum(withCount n : Int) -> String {
         var result = ""
