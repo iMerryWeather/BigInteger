@@ -67,10 +67,39 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers &
+//Operator wrappers |
 extension BigInteger {
     public static func | (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return or(lhs: lhs, rhs: rhs)
+    }
+}
+
+extension BigInteger {
+    /*
+     * Returns a BigInteger whose value is ~this.  (This function returns a
+     * negative value if and only if this BigInteger is non-negative.)
+     */
+    private static func not(this : BigInteger) -> BigInteger {
+        var this = this
+        var res = [UInt32]()
+        if !this.signum {
+            this.mag.twosComplement()
+        }
+        for i in 0 ..< this.mag.count {
+            res.append(~this.mag[i])
+        }
+        if this.signum {
+            res.twosComplement()
+            return BigInteger(signum: false, mag: res)
+        }
+        return BigInteger(signum: true, mag: res)
+    }
+}
+
+//Operator wrappers ~
+extension BigInteger {
+    public static prefix func ~ (this : BigInteger) -> BigInteger {
+        return not(this: this)
     }
 }
 
