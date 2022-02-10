@@ -59,11 +59,11 @@ extension BigInteger {
         for i in 0 ..< count {
             res.append(lhs.mag[i] | rhs.mag[i])
         }
-        if lhs.signum && rhs.signum {
-            return BigInteger(signum: true, mag: res)
+        if !lhs.signum || !rhs.signum {
+            res.twosComplement()
+            return BigInteger(signum: false, mag: res)
         }
-        res.twosComplement()
-        return BigInteger(signum: false, mag: res)
+        return BigInteger(signum: true, mag: res)
     }
 }
 
@@ -100,6 +100,43 @@ extension BigInteger {
 extension BigInteger {
     public static prefix func ~ (this : BigInteger) -> BigInteger {
         return not(this: this)
+    }
+}
+
+extension BigInteger {
+    /*
+     * Returns a BigInteger whose value is ~this.  (This function returns a
+     * negative BigInteger if and only if exactly one of this and val are
+     * negative.)
+     */
+    private static func xor(lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        var lhs = lhs
+        var rhs = rhs
+        var res = [UInt32]()
+        let count = max(lhs.mag.count, rhs.mag.count)
+        if !lhs.signum {
+            lhs.mag.twosComplement()
+        }
+        if !rhs.signum {
+            rhs.mag.twosComplement()
+        }
+        for i in 0 ..< count {
+            res.append(lhs.mag[i] ^ rhs.mag[i])
+        }
+        // `^` and `!=` are logically equivalent, they have the same
+        // truth table
+        if lhs.signum != rhs.signum {
+            res.twosComplement()
+            return BigInteger(signum: false, mag: res)
+        }
+        return BigInteger(signum: true, mag: res)
+    }
+}
+
+//Operator wrappers ^
+extension BigInteger {
+    public static func ^ (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        return xor(lhs: lhs, rhs: rhs)
     }
 }
 
