@@ -266,6 +266,13 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
     }
     
+    func testLeftShift() {
+        let bigNum = getRandomNum(withCount: 2048)
+        let a = BigInteger(from: bigNum)
+        let x : PythonObject = bigNum.pythonObject
+        XCTAssertEqual(String(a << 31), String(Python.int(x) * Python.pow(2, 31)))
+    }
+    
     //Return a n size positive test number
     func getRandomNum(withCount n : Int) -> String {
         var result = ""
