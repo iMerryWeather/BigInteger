@@ -65,18 +65,19 @@ extension BigInteger {
         
         //Special case: entire contents shifted off the end
         if bitGroupCount >= this.mag.count {
-            return BigInteger(signum: true, mag: [0]);
-            //TO-DO: negative return -1
+            return this.signum ? BigInteger(signum: true, mag: [0])
+                               : BigInteger(signum: false, mag: [1])
         }
-        
+
         //may need a performance improvement.
         //shift 32 * bitGroupCount bits, with rem bits not shifted
         for _ in 0 ..< bitGroupCount {
             this.mag.removeFirst()
         }
         if rem == 0 {
-            return this
+            return this.signum ? this : this - BigInteger(signum: true,mag: [1])
         }
+
         //shift left 32-bits first to imitate an underflow
         //perform rem-bits shift, from low to high. (0 < rem < 32)
         //perform first bits group, drop underflow
@@ -92,7 +93,7 @@ extension BigInteger {
         
         this.mag = BigInteger.removeLeadingZeros(mag: this.mag)
         
-        return this
+        return this.signum ? this : this - BigInteger(signum: true, mag: [1])
     }
 }
 
