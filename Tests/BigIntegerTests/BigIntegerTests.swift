@@ -269,9 +269,15 @@ final class BigIntegerTests: XCTestCase {
     func testLeftShift() {
         let bigNum = getRandomNum(withCount: 20480)
         let a = BigInteger(from: bigNum)
+        let b = BigInteger(from: "-" + bigNum)
         let x : PythonObject = bigNum.pythonObject
+        let y :PythonObject = ("-" + bigNum).pythonObject
+        //positive
         XCTAssertEqual(String(a << 19358),
                        String(Python.int(x) * Python.pow(2, 19358)))
+        //negative
+        XCTAssertEqual(String(b << 19358),
+                       String(Python.int(y) * Python.pow(2, 19358)))
     }
     
     func testRightShift() {
