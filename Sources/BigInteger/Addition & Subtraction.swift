@@ -86,6 +86,9 @@ extension BigInteger {
      *     -   |   -   |     c = -(|a| + |b|) //case 4
      */
     private static func add(lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        if rhs == BigInteger.ZERO {
+            return lhs
+        }
         var lhs = lhs
         var rhs = rhs
         if lhs.signum && rhs.signum { //case 1
