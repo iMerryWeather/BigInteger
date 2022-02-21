@@ -88,6 +88,8 @@ extension BigInteger {
     private static func add(lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         if rhs == BigInteger.ZERO {
             return lhs
+        } else if lhs == BigInteger.ZERO {
+            return rhs
         }
         var lhs = lhs
         var rhs = rhs

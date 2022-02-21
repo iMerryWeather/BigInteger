@@ -1,5 +1,6 @@
 import Foundation
-public struct BigInteger {
+
+public struct BigInteger : Equatable {
     //FALSE for negative, TRUE for zero & positive
     var signum : Bool
 
