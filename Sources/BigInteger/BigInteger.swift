@@ -36,6 +36,11 @@ public struct BigInteger {
     private let bitsPerDigit : UInt64 = 3402
 
     /*
+     * The BigInteger constant ZERO
+     */
+    public static let ZERO = BigInteger(signum: true, mag: [0])
+    
+    /*
      * Translates the decimal String representation of a BigInteger into a
      * BigInteger. The String representation consists of an optional minus or
      * plus sign followed by a sequence of one or more decimal digits.
