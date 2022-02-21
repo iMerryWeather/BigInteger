@@ -133,6 +133,11 @@ extension BigInteger {
      */
     private static func subtract(lhs : BigInteger, rhs : BigInteger)
                         -> BigInteger {
+        if rhs == BigInteger.ZERO {
+            return lhs
+        } else if lhs == BigInteger.ZERO {
+            return -rhs
+        }
         var rhs = rhs
         var c : BigInteger
         if lhs.signum && rhs.signum {                                //a > b
@@ -164,5 +169,11 @@ extension BigInteger {
 extension BigInteger {
     public static func - (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return subtract(lhs: lhs, rhs: rhs)
+    }
+    
+    public static prefix func - (this : BigInteger) -> BigInteger {
+        var this = this
+        this.negate()
+        return this
     }
 }

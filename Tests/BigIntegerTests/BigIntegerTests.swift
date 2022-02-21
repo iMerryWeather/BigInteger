@@ -97,20 +97,45 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(_bigIntA2048 + _bigIntB2048),
                        String(_pyBigIntA2048 + _pyBigIntB2048))
     }
-    /*
-    func testSubtractT2() {
-        let a = BigInteger(from: BigIntegerTests.numA2048)
-        let b = BigInteger(from: BigIntegerTests.numB2048)
-        let ma = BigInteger(from: "-" + numA2048)
-        let mb = BigInteger(from: "-" + numB2048)
-        var x : PythonObject = numA2048.pythonObject
-        let y : PythonObject = numB2048.pythonObject
-        
-        XCTAssertEqual(String(a - b), String(Python.int(x) - Python.int(y)))
-        x = ("-" + numA2048).pythonObject
-        XCTAssertEqual(String(ma - mb), String(Python.int(x) + Python.int(y)))
-    }
     
+    func testSubtract() {
+        //special case, a == 0
+        XCTAssertEqual(String(BigInteger.ZERO - bigIntB2048),
+                       String(0 - pyBigIntB2048))
+        //special case, b == 0
+        XCTAssertEqual(String(bigIntA2048 - BigInteger.ZERO),
+                       String(pyBigIntA2048 - 0))
+        //special case, a == 0 && b == 0
+        XCTAssertEqual(String(BigInteger(from: "0") - BigInteger.ZERO),
+                       String(0 + 0))
+        
+        //small case, a > 0 && b > 0
+        XCTAssertEqual(String(bigIntA16 - bigIntB16),
+                       String(intA16 - intB16))
+        //small case, a > 0 && b < 0
+        XCTAssertEqual(String(bigIntA16 - _bigIntB16),
+                       String(intA16 - _intB16))
+        //small case, a < 0 && b > 0
+        XCTAssertEqual(String(_bigIntA16 - bigIntB16),
+                       String(_intA16 - intB16))
+        //small case, a < 0 && b < 0
+        XCTAssertEqual(String(_bigIntA16 - _bigIntB16),
+                       String(_intA16 - _intB16))
+        
+        //big case, a > 0 && b > 0
+        XCTAssertEqual(String(bigIntA2048 - bigIntB2048),
+                       String(pyBigIntA2048 - pyBigIntB2048))
+        //big case, a > 0 && b < 0
+        XCTAssertEqual(String(bigIntA2048 - _bigIntB2048),
+                       String(pyBigIntA2048 - _pyBigIntB2048))
+        //big case, a < 0 && b > 0
+        XCTAssertEqual(String(_bigIntA2048 - bigIntB2048),
+                       String(_pyBigIntA2048 - pyBigIntB2048))
+        //big case, a < 0 && b < 0
+        XCTAssertEqual(String(_bigIntA2048 - _bigIntB2048),
+                       String(_pyBigIntA2048 - _pyBigIntB2048))
+    }
+    /*
     func testMultiplyT2() {
         var a = BigInteger(from: numA2048)
         let b = BigInteger(from: numB2048)
