@@ -3,6 +3,11 @@ import XCTest
 import PythonKit
 
 final class BigIntegerTests: XCTestCase {
+    let numA2048 = getRandomNum(withCount: 2048)
+    let numB2048 = getRandomNum(withCount: 2048)
+    let numA256 = getRandomNum(withCount: 256)
+    let numA20480 = getRandomNum(withCount: 20480)
+    
     func testPublicInitFromStr() {
         let a = BigInteger(from:
                 "0000000000000000000000000000000000000612361193061935861237")
@@ -128,150 +133,132 @@ final class BigIntegerTests: XCTestCase {
     }
     
     func testAddT2() {
-        let bigNumA = getRandomNum(withCount: 2048)
-        let bigNumB = getRandomNum(withCount: 2048)
-        let a = BigInteger(from: bigNumA)
-        let b = BigInteger(from: bigNumB)
-        let minusB = BigInteger(from: "-" + bigNumB)
+        let a = BigInteger(from: numA2048)
+        let b = BigInteger(from: numB2048)
+        let minusB = BigInteger(from: "-" + numB2048)
 
-        let x : PythonObject = bigNumA.pythonObject
-        let y : PythonObject = bigNumB.pythonObject
+        let x : PythonObject = numA2048.pythonObject
+        let y : PythonObject = numB2048.pythonObject
         XCTAssertEqual(String(a + b), String(Python.int(x) + Python.int(y)))
         XCTAssertEqual(String(a + minusB), String(Python.int(x) - Python.int(y)))
     }
     
     func testSubtractT2() {
-        let bigNumA = getRandomNum(withCount: 2048)
-        let bigNumB = getRandomNum(withCount: 2048)
-        let a = BigInteger(from: bigNumA)
-        let b = BigInteger(from: bigNumB)
-        let ma = BigInteger(from: "-" + bigNumA)
-        let mb = BigInteger(from: "-" + bigNumB)
-        var x : PythonObject = bigNumA.pythonObject
-        let y : PythonObject = bigNumB.pythonObject
+        let a = BigInteger(from: numA2048)
+        let b = BigInteger(from: numB2048)
+        let ma = BigInteger(from: "-" + numA2048)
+        let mb = BigInteger(from: "-" + numB2048)
+        var x : PythonObject = numA2048.pythonObject
+        let y : PythonObject = numB2048.pythonObject
         
         XCTAssertEqual(String(a - b), String(Python.int(x) - Python.int(y)))
-        x = ("-" + bigNumA).pythonObject
+        x = ("-" + numA2048).pythonObject
         XCTAssertEqual(String(ma - mb), String(Python.int(x) + Python.int(y)))
     }
     
     func testMultiplyT2() {
-        let bigNumA = getRandomNum(withCount: 2048)
-        let bigNumB = getRandomNum(withCount: 2048)
-        var a = BigInteger(from: bigNumA)
-        let b = BigInteger(from: bigNumB)
-        var x : PythonObject = bigNumA.pythonObject
-        let y : PythonObject = bigNumB.pythonObject
+        var a = BigInteger(from: numA2048)
+        let b = BigInteger(from: numB2048)
+        var x : PythonObject = numA2048.pythonObject
+        let y : PythonObject = numB2048.pythonObject
         
         XCTAssertEqual(String(a * b), String(Python.int(x) * Python.int(y)))
-        x = ("-" + bigNumA).pythonObject
-        a = BigInteger(from: "-" + bigNumA)
+        x = ("-" + numA2048).pythonObject
+        a = BigInteger(from: "-" + numA2048)
         XCTAssertEqual(String(a * b), String(Python.int(x) * Python.int(y)))
     }
     
     func testDivideT2() {
-        let bigNumA = getRandomNum(withCount: 2048)
-        let bigNumB = getRandomNum(withCount: 256)
-        let a = BigInteger(from: bigNumA)
-        let b = BigInteger(from: bigNumB)
-        let x : PythonObject = bigNumA.pythonObject
-        let y : PythonObject = bigNumB.pythonObject
+        let a = BigInteger(from: numA2048)
+        let b = BigInteger(from: numA256)
+        let x : PythonObject = numA2048.pythonObject
+        let y : PythonObject = numA256.pythonObject
         
         //Python's division for negative number is not the same here.
         XCTAssertEqual(String(a / b), String(Python.divmod(Python.int(x), Python.int(y)).tuple2.0))
     }
     
     func testModT2() {
-        let bigNumA = getRandomNum(withCount: 2048)
-        let bigNumB = getRandomNum(withCount: 1024)
-        let a = BigInteger(from: bigNumA)
-        let b = BigInteger(from: bigNumB)
-        let x : PythonObject = bigNumA.pythonObject
-        let y : PythonObject = bigNumB.pythonObject
+        let a = BigInteger(from: numA2048)
+        let b = BigInteger(from: numA256)
+        let x : PythonObject = numA2048.pythonObject
+        let y : PythonObject = numA256.pythonObject
         
         //Python's division for negative number is not the same here.
         XCTAssertEqual(String(a % b), String(Python.divmod(Python.int(x), Python.int(y)).tuple2.1))
     }
     
     func testAnd() {
-        let bigNumA = getRandomNum(withCount: 2048)
-        let bigNumB = getRandomNum(withCount: 2048)
-        var a = BigInteger(from: bigNumA)
-        var b = BigInteger(from: bigNumB)
-        var x : PythonObject = bigNumA.pythonObject
-        var y : PythonObject = bigNumB.pythonObject
+        var a = BigInteger(from: numA2048)
+        var b = BigInteger(from: numB2048)
+        var x : PythonObject = numA2048.pythonObject
+        var y : PythonObject = numB2048.pythonObject
         
         //positive AND positive
         XCTAssertEqual(String(a & b), String(Python.int(x) & Python.int(y)))
-        x = ("-" + bigNumA).pythonObject
-        a = BigInteger(from: "-" + bigNumA)
+        x = ("-" + numA2048).pythonObject
+        a = BigInteger(from: "-" + numA2048)
         //negative AND positive
         XCTAssertEqual(String(a & b), String(Python.int(x) & Python.int(y)))
-        y = ("-" + bigNumB).pythonObject
-        b = BigInteger(from: "-" + bigNumB)
+        y = ("-" + numB2048).pythonObject
+        b = BigInteger(from: "-" + numB2048)
         //negative AND negative
         XCTAssertEqual(String(a & b), String(Python.int(x) & Python.int(y)))
     }
     
     func testOr() {
-        let bigNumA = getRandomNum(withCount: 2048)
-        let bigNumB = getRandomNum(withCount: 2048)
-        var a = BigInteger(from: bigNumA)
-        var b = BigInteger(from: bigNumB)
-        var x : PythonObject = bigNumA.pythonObject
-        var y : PythonObject = bigNumB.pythonObject
+        var a = BigInteger(from: numA2048)
+        var b = BigInteger(from: numB2048)
+        var x : PythonObject = numA2048.pythonObject
+        var y : PythonObject = numB2048.pythonObject
         
         //positive OR positive
         XCTAssertEqual(String(a | b), String(Python.int(x) | Python.int(y)))
-        x = ("-" + bigNumA).pythonObject
-        a = BigInteger(from: "-" + bigNumA)
+        x = ("-" + numA2048).pythonObject
+        a = BigInteger(from: "-" + numA2048)
         //negative OR positive
         XCTAssertEqual(String(a | b), String(Python.int(x) | Python.int(y)))
-        y = ("-" + bigNumB).pythonObject
-        b = BigInteger(from: "-" + bigNumB)
+        y = ("-" + numB2048).pythonObject
+        b = BigInteger(from: "-" + numB2048)
         //negative OR negative
         XCTAssertEqual(String(a | b), String(Python.int(x) | Python.int(y)))
     }
     
     func testNot() {
-        let bigNum = getRandomNum(withCount: 2048)
-        var a = BigInteger(from: bigNum)
-        var x : PythonObject = bigNum.pythonObject
+        var a = BigInteger(from: numA2048)
+        var x : PythonObject = numA2048.pythonObject
         
         //positive NOT
         XCTAssertEqual(String(~a), String(~Python.int(x)))
-        x = ("-" + bigNum).pythonObject
-        a = BigInteger(from: "-" + bigNum)
+        x = ("-" + numA2048).pythonObject
+        a = BigInteger(from: "-" + numA2048)
         //negative NOT
         XCTAssertEqual(String(~a), String(~Python.int(x)))
     }
     
     func testXor() {
-        let bigNumA = getRandomNum(withCount: 2048)
-        let bigNumB = getRandomNum(withCount: 2048)
-        var a = BigInteger(from: bigNumA)
-        var b = BigInteger(from: bigNumB)
-        var x : PythonObject = bigNumA.pythonObject
-        var y : PythonObject = bigNumB.pythonObject
+        var a = BigInteger(from: numA2048)
+        var b = BigInteger(from: numB2048)
+        var x : PythonObject = numA2048.pythonObject
+        var y : PythonObject = numB2048.pythonObject
         
         //positive XOR positive
         XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
-        x = ("-" + bigNumA).pythonObject
-        a = BigInteger(from: "-" + bigNumA)
+        x = ("-" + numA2048).pythonObject
+        a = BigInteger(from: "-" + numA2048)
         //negative XOR positive
         XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
-        y = ("-" + bigNumB).pythonObject
-        b = BigInteger(from: "-" + bigNumB)
+        y = ("-" + numB2048).pythonObject
+        b = BigInteger(from: "-" + numB2048)
         //negative XOR negative
         XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
     }
     
     func testLeftShift() {
-        let bigNum = getRandomNum(withCount: 20480)
-        let a = BigInteger(from: bigNum)
-        let b = BigInteger(from: "-" + bigNum)
-        let x : PythonObject = bigNum.pythonObject
-        let y :PythonObject = ("-" + bigNum).pythonObject
+        let a = BigInteger(from: numA20480)
+        let b = BigInteger(from: "-" + numA20480)
+        let x : PythonObject = numA20480.pythonObject
+        let y :PythonObject = ("-" + numA20480).pythonObject
         //positive
         XCTAssertEqual(String(a << 19358),
                        String(Python.int(x) * Python.pow(2, 19358)))
@@ -281,11 +268,10 @@ final class BigIntegerTests: XCTestCase {
     }
     
     func testRightShift() {
-        let bigNum = getRandomNum(withCount: 20480)
-        let a = BigInteger(from: bigNum)
-        let b = BigInteger(from: "-" + bigNum)
-        let x : PythonObject = bigNum.pythonObject
-        let y :PythonObject = ("-" + bigNum).pythonObject
+        let a = BigInteger(from: numA20480)
+        let b = BigInteger(from: "-" + numA20480)
+        let x : PythonObject = numA20480.pythonObject
+        let y :PythonObject = ("-" + numA20480).pythonObject
         //positive
         XCTAssertEqual(String(a >> 19358),
                        String(Python.divmod(Python.int(x),
@@ -303,7 +289,7 @@ final class BigIntegerTests: XCTestCase {
     }
     
     //Return a n size positive test number
-    func getRandomNum(withCount n : Int) -> String {
+    static func getRandomNum(withCount n : Int) -> String {
         var result = ""
         for _ in 0 ..< n {
             result += String(arc4random() % 10)
