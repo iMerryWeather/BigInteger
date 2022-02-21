@@ -145,7 +145,7 @@ public struct BigInteger {
      */
     init(signum : Bool, mag : [UInt32]) {
         self.signum = signum
-        self.mag = mag
+        self.mag = BigInteger.removeLeadingZeros(mag: mag)
     }
 
     /*
@@ -166,7 +166,7 @@ public struct BigInteger {
     }
 
     /*
-     * remove all leading zeros, if mag is all zero, mag will equal [0]
+     * remove all leading zeros, if mag is all zero, mag will be equal to [0]
      */
     static func removeLeadingZeros(mag : [UInt32]) -> [UInt32] {
         var mag = mag
