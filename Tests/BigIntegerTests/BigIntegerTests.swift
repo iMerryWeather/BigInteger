@@ -61,6 +61,16 @@ final class BigIntegerTests: XCTestCase {
     }
     
     func testAdd() {
+        //special case, a == 0
+        XCTAssertEqual(String(BigInteger.ZERO + bigIntB2048),
+                       String(0 + pyBigIntB2048))
+        //special case, b == 0
+        XCTAssertEqual(String(bigIntA2048 + BigInteger.ZERO),
+                       String(pyBigIntA2048 + 0))
+        //special case, a == 0 && b == 0
+        XCTAssertEqual(String(BigInteger(from: "0") + BigInteger.ZERO),
+                       String(0 + 0))
+        
         //small case, a > 0 && b > 0
         XCTAssertEqual(String(bigIntA16 + bigIntB16),
                        String(intA16 + intB16))
