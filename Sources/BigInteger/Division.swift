@@ -9,9 +9,9 @@ extension BigInteger {
      * let mag2 = (v_{n - 1} ... v1 v0) (v_{n-1} != 0 and n > 1)
      * then this func will return:
      * q = (q_m q_{m-1} ... q0)
-     * r = (r_{n - 1} ... r1 r0)
+     * /*r = (r_{n - 1} ... r1 r0)*/ r will be calculated by (a - a / b * b)
      *
-     * - version: 1.1 beta 2
+     * - version: 1.1
      */
 
     private static func nlz(_ x : UInt32) -> Int {
@@ -27,7 +27,7 @@ extension BigInteger {
         return n
     }
 
-    static func divide(mag1 : [UInt32], mag2 : [UInt32]) -> ([UInt32], [UInt32]) {
+    static func divide(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
         let u = mag1
         let v = mag2
         //calculate m & n first
@@ -35,23 +35,23 @@ extension BigInteger {
         let m = u.count
         let n = v.count
 
+        //for dividend < divisor
+        if m < n {
+            return /*(*/[0]/*, u)*/
+        }
+        
         var q = [UInt32](repeating: 0, count: m - n + 1)
-        var r = [UInt32](repeating: 0, count: n)
+        //var r = [UInt32](repeating: 0, count: n)
         var k : Int64 = 0
         var t : Int64 = 0
         var p : UInt64 = 0
 
         //compare dividend & divisor
         //TO-DO
-
-        //for dividend < divisor
-        if m < n {
-            return ([0], u)
-        }
         
         //for same dividend & divisor
         if u == v {
-            return([1], [0])
+            return /*(*/[1]/*, [0])*/
         }
 
         //Special case one word divisor
@@ -62,8 +62,8 @@ extension BigInteger {
                             ((k << 32) + Int64(u[j])) / Int64(v[0]))
                 k = ((k << 32) + Int64(u[j])) - Int64(q[j]) * Int64(v[0])
             }
-            r.append(UInt32(k))
-            return (q, r)
+            //r.append(UInt32(k))
+            return /*(*/q/*, r)*/
         }
 
         //normalize v & n
@@ -132,13 +132,13 @@ extension BigInteger {
             }
         }
 
-        for i in 0 ..< n {
-            r[i] = (un[i] >> s) |
-                   UInt32(truncatingIfNeeded: (UInt64(un[i + 1]) << (32 - s)))
-        }
-        r[n - 1] = un[n - 1] >> s
+//        for i in 0 ..< n {
+//            r[i] = (un[i] >> s) |
+//                   UInt32(truncatingIfNeeded: (UInt64(un[i + 1]) << (32 - s)))
+//        }
+//        r[n - 1] = un[n - 1] >> s
 
-        return (q, r)
+        return /*(*/q/*, r)*/
     }
 }
 
@@ -157,8 +157,11 @@ extension BigInteger {
      */
     private static func divide(lhs : BigInteger, rhs : BigInteger)
                         -> BigInteger {
+        if lhs == BigInteger.ZERO {
+            return BigInteger.ZERO
+        }
         return BigInteger(signum: lhs.signum == rhs.signum,
-                              mag: divide(mag1: lhs.mag, mag2: rhs.mag).0)
+                              mag: divide(mag1: lhs.mag, mag2: rhs.mag)/*.0*/)
     }
 }
 

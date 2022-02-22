@@ -17,9 +17,13 @@ extension BigInteger {
         let uint64Radix = BigInteger(from: String(longRadix)) //10 ** 18
 
         while tmp.mag != [0] { //tmp != zero
-            var (q, r) = BigInteger.divide(mag1: tmp.mag, mag2: uint64Radix.mag)
-            (q, r) = (BigInteger.removeLeadingZeros(mag: q),
-                      BigInteger.removeLeadingZeros(mag: r))
+//            var (q, r) = BigInteger.divide(mag1: tmp.mag, mag2: uint64Radix.mag)
+//            (q, r) = (BigInteger.removeLeadingZeros(mag: q),
+//                      BigInteger.removeLeadingZeros(mag: r))
+            let q = BigInteger.divide(mag1: tmp.mag, mag2: uint64Radix.mag)
+            let r = BigInteger.subtract(mag1: tmp.mag,
+                            mag2: BigInteger.multiply(mag1: q,
+                                                      mag2: uint64Radix.mag))
 
             tmp.mag = q
 

@@ -28,14 +28,18 @@ final class BigIntegerTests: XCTestCase {
     //16 digits long big integer A
     let bigIntA16 = BigInteger(from: numA16)
     let intA16 = Int(numA16)!
+    let pyBigIntA16 = Python.int(numA16.pythonObject)
     let _bigIntA16 = BigInteger(from: _numA16)
-    let _intA16 = -1 * Int(numA16)!
+    let _intA16 = Int(_numA16)!
+    let _pyBigIntA16 = Python.int(_numA16.pythonObject)
     
     //16 digits long big integer B
     let bigIntB16 = BigInteger(from: numB16)
     let intB16 = Int(numB16)!
+    let pyBigIntB16 = Python.int(numB16.pythonObject)
     let _bigIntB16 = BigInteger(from: _numB16)
-    let _intB16 = -1 * Int(numB16)!
+    let _intB16 = Int(_numB16)!
+    let _pyBigIntB16 = Python.int(_numB16.pythonObject)
     
     func testPublicInitFromStr() {
         let a = BigInteger(from:
@@ -96,6 +100,19 @@ final class BigIntegerTests: XCTestCase {
         //big case, a < 0 && b < 0
         XCTAssertEqual(String(_bigIntA2048 + _bigIntB2048),
                        String(_pyBigIntA2048 + _pyBigIntB2048))
+        
+        //mix case, a > 0 && b > 0, a >> b  (>> stand for much larger)
+        XCTAssertEqual(String(bigIntA2048 + bigIntB16),
+                       String(pyBigIntA2048 + pyBigIntB16))
+        //mix case, a > 0 && b < 0, a << b
+        XCTAssertEqual(String(bigIntA16 + _bigIntB2048),
+                       String(pyBigIntA16 + _pyBigIntB2048))
+        //mix case, a < 0 && b > 0, a >> b
+        XCTAssertEqual(String(_bigIntA2048 + bigIntB16),
+                       String(_pyBigIntA2048 + pyBigIntB16))
+        //mix case, a < 0 && b < 0, a << b
+        XCTAssertEqual(String(_bigIntA16 + _bigIntB2048),
+                       String(_pyBigIntA16 + _pyBigIntB2048))
     }
     
     func testSubtract() {
@@ -107,7 +124,7 @@ final class BigIntegerTests: XCTestCase {
                        String(pyBigIntA2048 - 0))
         //special case, a == 0 && b == 0
         XCTAssertEqual(String(BigInteger(from: "0") - BigInteger.ZERO),
-                       String(0 + 0))
+                       String(0 - 0))
         
         //small case, a > 0 && b > 0
         XCTAssertEqual(String(bigIntA16 - bigIntB16),
@@ -134,30 +151,133 @@ final class BigIntegerTests: XCTestCase {
         //big case, a < 0 && b < 0
         XCTAssertEqual(String(_bigIntA2048 - _bigIntB2048),
                        String(_pyBigIntA2048 - _pyBigIntB2048))
-    }
-    /*
-    func testMultiplyT2() {
-        var a = BigInteger(from: numA2048)
-        let b = BigInteger(from: numB2048)
-        var x : PythonObject = numA2048.pythonObject
-        let y : PythonObject = numB2048.pythonObject
         
-        XCTAssertEqual(String(a * b), String(Python.int(x) * Python.int(y)))
-        x = ("-" + numA2048).pythonObject
-        a = BigInteger(from: "-" + numA2048)
-        XCTAssertEqual(String(a * b), String(Python.int(x) * Python.int(y)))
+        //mix case, a > 0 && b > 0, a >> b  (>> stand for much larger)
+        XCTAssertEqual(String(bigIntA2048 - bigIntB16),
+                       String(pyBigIntA2048 - pyBigIntB16))
+        //mix case, a > 0 && b < 0, a << b
+        XCTAssertEqual(String(bigIntA16 - _bigIntB2048),
+                       String(pyBigIntA16 - _pyBigIntB2048))
+        //mix case, a < 0 && b > 0, a >> b
+        XCTAssertEqual(String(_bigIntA2048 - bigIntB16),
+                       String(_pyBigIntA2048 - pyBigIntB16))
+        //mix case, a < 0 && b < 0, a << b
+        XCTAssertEqual(String(_bigIntA16 - _bigIntB2048),
+                       String(_pyBigIntA16 - _pyBigIntB2048))
     }
     
-    func testDivideT2() {
-        let a = BigInteger(from: numA2048)
-        let b = BigInteger(from: numA256)
-        let x : PythonObject = numA2048.pythonObject
-        let y : PythonObject = numA256.pythonObject
+    func testMultiply() {
+        //special case, a == 0
+        XCTAssertEqual(String(BigInteger.ZERO * bigIntB2048),
+                       String(0 * pyBigIntB2048))
+        //special case, b == 0
+        XCTAssertEqual(String(bigIntA2048 * BigInteger.ZERO),
+                       String(pyBigIntA2048 * 0))
+        //special case, a == 0 && b == 0
+        XCTAssertEqual(String(BigInteger(from: "0") * BigInteger.ZERO),
+                       String(0 * 0))
+        
+        //small case, a > 0 && b > 0
+        XCTAssertEqual(String(bigIntA16 * bigIntB16),
+                       String(pyBigIntA16 * pyBigIntB16))
+        //small case, a > 0 && b < 0
+        XCTAssertEqual(String(bigIntA16 * _bigIntB16),
+                       String(pyBigIntA16 * _pyBigIntB16))
+        //small case, a < 0 && b > 0
+        XCTAssertEqual(String(_bigIntA16 * bigIntB16),
+                       String(_pyBigIntA16 * pyBigIntB16))
+        //small case, a < 0 && b < 0
+        XCTAssertEqual(String(_bigIntA16 * _bigIntB16),
+                       String(_pyBigIntA16 * _pyBigIntB16))
+        
+        //big case, a > 0 && b > 0
+        XCTAssertEqual(String(bigIntA2048 * bigIntB2048),
+                       String(pyBigIntA2048 * pyBigIntB2048))
+        //big case, a > 0 && b < 0
+        XCTAssertEqual(String(bigIntA2048 * _bigIntB2048),
+                       String(pyBigIntA2048 * _pyBigIntB2048))
+        //big case, a < 0 && b > 0
+        XCTAssertEqual(String(_bigIntA2048 * bigIntB2048),
+                       String(_pyBigIntA2048 * pyBigIntB2048))
+        //big case, a < 0 && b < 0
+        XCTAssertEqual(String(_bigIntA2048 * _bigIntB2048),
+                       String(_pyBigIntA2048 * _pyBigIntB2048))
+        
+        //mix case, a > 0 && b > 0, a >> b  (>> stand for much larger)
+        XCTAssertEqual(String(bigIntA2048 * bigIntB16),
+                       String(pyBigIntA2048 * pyBigIntB16))
+        //mix case, a > 0 && b < 0, a << b
+        XCTAssertEqual(String(bigIntA16 * _bigIntB2048),
+                       String(pyBigIntA16 * _pyBigIntB2048))
+        //mix case, a < 0 && b > 0, a >> b
+        XCTAssertEqual(String(_bigIntA2048 * bigIntB16),
+                       String(_pyBigIntA2048 * pyBigIntB16))
+        //mix case, a < 0 && b < 0, a << b
+        XCTAssertEqual(String(_bigIntA16 * _bigIntB2048),
+                       String(_pyBigIntA16 * _pyBigIntB2048))
+    }
+    
+    func testDivide() {
+        //special case, a == 0
+        XCTAssertEqual(String(BigInteger.ZERO / bigIntB2048),
+                       String(Python.divmod(0, pyBigIntB2048).tuple2.0))
+        //special case, b == 0, report error
+//        XCTAssertEqual(String(bigIntA2048 / BigInteger.ZERO),
+//                       String(pyBigIntA2048 / 0))
+        //special case, a == 0 && b == 0, report error
+//        XCTAssertEqual(String(BigInteger(from: "0") / BigInteger.ZERO),
+//                       String(0 / 0))
+        //small case, a > 0 && b > 0
+        XCTAssertEqual(String(bigIntA16 / bigIntB16),
+                       String(intA16 / intB16))
+        //small case, a > 0 && b < 0
+        XCTAssertEqual(String(bigIntA16 / _bigIntB16),
+                       String(intA16 / _intB16))
+        //small case, a < 0 && b > 0
+        XCTAssertEqual(String(_bigIntA16 / bigIntB16),
+                       String(_intA16 / intB16))
+        //small case, a < 0 && b < 0
+        XCTAssertEqual(String(_bigIntA16 / _bigIntB16),
+                       String(_intA16 / _intB16))
+
+        //big case, a > 0 && b > 0
+        XCTAssertEqual(String(bigIntA2048 / bigIntB2048),
+                       String(Python.divmod(pyBigIntA2048, pyBigIntB2048)
+                                .tuple2.0))
+        //big case, a > 0 && b < 0
+        XCTAssertEqual(String(bigIntA2048 / _bigIntB2048 * _bigIntB2048 +
+                             bigIntA2048 % _bigIntB2048),
+                       String(bigIntA2048))
+        //big case, a < 0 && b > 0
+        XCTAssertEqual(String(_bigIntA2048 / bigIntB2048 * bigIntB2048 +
+                             _bigIntA2048 % bigIntB2048),
+                       String(_bigIntA2048))
+        //big case, a < 0 && b < 0
+        XCTAssertEqual(String(_bigIntA2048 / _bigIntB2048),
+                       String(Python.divmod(_pyBigIntA2048, _pyBigIntB2048)
+                                .tuple2.0))
+
+        //mix case, a > 0 && b > 0, a >> b  (>> stand for much larger)
+        XCTAssertEqual(String(bigIntA2048 / bigIntB16),
+                       String(Python.divmod(pyBigIntA2048, pyBigIntB16)
+                                .tuple2.0))
+        //mix case, a > 0 && b < 0, a << b
+        XCTAssertEqual(String(bigIntA16 / _bigIntB2048 * _bigIntB2048 +
+                             bigIntA16 % _bigIntB2048),
+                       String(bigIntA16))
+        //mix case, a < 0 && b > 0, a >> b
+        XCTAssertEqual(String(_bigIntA2048 / bigIntB16 * bigIntB16 +
+                             _bigIntA2048 % bigIntB16),
+                       String(_bigIntA2048))
+        //mix case, a < 0 && b < 0, a << b
+        XCTAssertEqual(String(_bigIntA16 / _bigIntB2048),
+                       String(Python.divmod(_pyBigIntA16, _pyBigIntB2048)
+                                .tuple2.0))
         
         //Python's division for negative number is not the same here.
-        XCTAssertEqual(String(a / b), String(Python.divmod(Python.int(x), Python.int(y)).tuple2.0))
+        //XCTAssertEqual(String(a / b), String(Python.divmod(Python.int(x), Python.int(y)).tuple2.0))
     }
-    
+    /*
     func testModT2() {
         let a = BigInteger(from: numA2048)
         let b = BigInteger(from: numA256)
