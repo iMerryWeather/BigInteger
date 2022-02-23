@@ -19,9 +19,11 @@ extension BigInteger {
         
         //may get a performance improvement. ( O(mag.count) )
         //shift 32 * bitGroupCount bits, with rem bits not shifted
-        for _ in 0 ..< bitGroupCount {
-            this.mag.insert(0, at: 0)
-        }
+        let alpha = [UInt32](repeating: 0, count: Int(bitGroupCount))
+        this.mag = alpha + this.mag
+//        for _ in 0 ..< bitGroupCount {
+//            this.mag.insert(0, at: 0)
+//        }
         if rem == 0 {
             return this
         }

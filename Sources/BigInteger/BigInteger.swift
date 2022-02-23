@@ -89,7 +89,7 @@ public struct BigInteger : Equatable {
 
         //if digits length is one
         if str.count == 1 {
-            mag.append(UInt32(str)!)
+            mag[0] = (UInt32(str)!)
             return
         }
 

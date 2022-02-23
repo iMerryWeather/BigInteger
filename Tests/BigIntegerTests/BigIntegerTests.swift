@@ -345,7 +345,7 @@ final class BigIntegerTests: XCTestCase {
         //special case, b == 0,
         XCTAssertEqual(String(bigIntA2048 & BigInteger.ZERO),
                        String(pyBigIntA2048 & 0))
-        //special case, a == 0 && b == 0, report error
+        //special case, a == 0 && b == 0
         XCTAssertEqual(String(BigInteger(from: "0") & BigInteger.ZERO),
                        String(0 & 0))
         
@@ -396,7 +396,7 @@ final class BigIntegerTests: XCTestCase {
         //special case, b == 0,
         XCTAssertEqual(String(bigIntA2048 | BigInteger.ZERO),
                        String(pyBigIntA2048 | 0))
-        //special case, a == 0 && b == 0, report error
+        //special case, a == 0 && b == 0
         XCTAssertEqual(String(BigInteger(from: "0") | BigInteger.ZERO),
                        String(0 | 0))
         
@@ -467,7 +467,7 @@ final class BigIntegerTests: XCTestCase {
         //special case, b == 0,
         XCTAssertEqual(String(bigIntA2048 ^ BigInteger.ZERO),
                        String(pyBigIntA2048 ^ 0))
-        //special case, a == 0 && b == 0, report error
+        //special case, a == 0 && b == 0
         XCTAssertEqual(String(BigInteger(from: "0") ^ BigInteger.ZERO),
                        String(0 ^ 0))
         
@@ -513,14 +513,41 @@ final class BigIntegerTests: XCTestCase {
     
     func testLeftShift() {
         //special case, a == 0
-        XCTAssertEqual(String(BigInteger.ZERO >> bigIntB2048),
-                       String(0 * Python.pow(2, pyBigIntB2048)))
+        XCTAssertEqual(String(BigInteger.ZERO << 19358),
+                       String(0))
         //special case, b == 0,
-        XCTAssertEqual(String(bigIntA2048 ^ BigInteger.ZERO),
-                       String(pyBigIntA2048 ^ 0))
-        //special case, a == 0 && b == 0, report error
-        XCTAssertEqual(String(BigInteger(from: "0") ^ BigInteger.ZERO),
-                       String(0 ^ 0))
+        XCTAssertEqual(String(bigIntA2048 << 0),
+                       String(pyBigIntA2048 * Python.pow(2, 0)))
+        //special case, a == 0 && b == 0
+        XCTAssertEqual(String(BigInteger(from: "0") << 0),
+                       String(0 << 0))
+        
+        //small case, a > 0
+        XCTAssertEqual(String(bigIntA16 << 12361),
+                       String(pyBigIntA16 * Python.pow(2, 12361)))
+        //small case, a < 0
+        XCTAssertEqual(String(_bigIntA16 << 19348),
+                       String(_pyBigIntA16 * Python.pow(2, 19348)))
+        
+        //big case, a > 0
+        XCTAssertEqual(String(bigIntA2048 << 12333),
+                       String(pyBigIntA2048 * Python.pow(2, 12333)))
+        //big case, a < 0
+        XCTAssertEqual(String(_bigIntA2048 << 19333),
+                       String(_pyBigIntA2048 * Python.pow(2, 19333)))
+        
+        //mix case, a > 0, a >> b  (>> stand for much larger)
+        XCTAssertEqual(String(bigIntA2048 << 61),
+                       String(pyBigIntA2048 * Python.pow(2, 61)))
+        //mix case, a > 0, a << b
+        XCTAssertEqual(String(BigInteger(from: "6") << 19306),
+                       String(6 * Python.pow(2, 19306)))
+        //mix case, a < 0, a >> b
+        XCTAssertEqual(String(_bigIntA2048 << 61),
+                       String(_pyBigIntA2048 * Python.pow(2, 61)))
+        //mix case, a < 0, a << b
+        XCTAssertEqual(String(BigInteger(from: "-6") << 19306),
+                       String(-6 * Python.pow(2, 19306)))
     }
     /*
     func testRightShift() {
