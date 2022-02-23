@@ -549,27 +549,50 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(BigInteger(from: "-6") << 19306),
                        String(-6 * Python.pow(2, 19306)))
     }
-    /*
+    
     func testRightShift() {
-        let a = BigInteger(from: numA20480)
-        let b = BigInteger(from: "-" + numA20480)
-        let x : PythonObject = numA20480.pythonObject
-        let y :PythonObject = ("-" + numA20480).pythonObject
-        //positive
-        XCTAssertEqual(String(a >> 19358),
-                       String(Python.divmod(Python.int(x),
-                              Python.pow(2, 19358)).tuple2.0))
-        XCTAssertEqual(String(a >> 1935800),
-                       String(Python.divmod(Python.int(x),
-                              Python.pow(2, 1935800)).tuple2.0))
-        //negative
-        XCTAssertEqual(String(b >> 2048),
-                       String(Python.divmod(Python.int(y),
-                              Python.pow(2, 2048)).tuple2.0))
-        XCTAssertEqual(String(b >> 1935800),
-                       String(Python.divmod(Python.int(y),
-                              Python.pow(2, 1935800)).tuple2.0))
-    }*/
+        //special case, a == 0
+        XCTAssertEqual(String(BigInteger.ZERO >> 19358),
+                       String(0))
+        //special case, b == 0,
+        XCTAssertEqual(String(bigIntA2048 >> 0),
+                       String(Python.divmod(pyBigIntA2048,
+                                            Python.pow(2, 0)).tuple2.0))
+        //special case, a == 0 && b == 0
+        XCTAssertEqual(String(BigInteger(from: "0") >> 0),
+                       String(0 >> 0))
+        
+        //small case, a > 0
+        XCTAssertEqual(String(bigIntA16 >> 61),
+                       String(intA16 >> 61))
+        //small case, a < 0
+        XCTAssertEqual(String(_bigIntA16 >> 48),
+                       String(_intA16 >> 48))
+        
+        //big case, a > 0
+        XCTAssertEqual(String(bigIntA2048 >> 12333),
+                       String(Python.divmod(pyBigIntA2048,
+                                            Python.pow(2, 12333)).tuple2.0))
+        //big case, a < 0
+        XCTAssertEqual(String(_bigIntA2048 >> 19333),
+                       String(Python.divmod(_pyBigIntA2048,
+                                            Python.pow(2, 19333)).tuple2.0))
+        
+        //mix case, a > 0, a >> b  (>> stand for much larger)
+        XCTAssertEqual(String(bigIntA2048 >> 61),
+                       String(Python.divmod(pyBigIntA2048,
+                                            Python.pow(2, 61)).tuple2.0))
+        //mix case, a > 0, a << b
+        XCTAssertEqual(String(BigInteger(from: "6") >> 19306),
+                       String(Python.divmod(6, Python.pow(2, 19306)).tuple2.0))
+        //mix case, a < 0, a >> b
+        XCTAssertEqual(String(_bigIntA2048 >> 61),
+                       String(Python.divmod(_pyBigIntA2048,
+                                            Python.pow(2, 61)).tuple2.0))
+        //mix case, a < 0, a << b
+        XCTAssertEqual(String(BigInteger(from: "-6") >> 19306),
+                       String(Python.divmod(-6, Python.pow(2, 19306)).tuple2.0))
+    }
     
     //Return a n size positive test number
     static func getRandomNum(withCount n : Int) -> String {
