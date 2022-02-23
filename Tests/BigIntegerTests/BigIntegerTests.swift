@@ -439,50 +439,90 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(_bigIntA16 | _bigIntB2048),
                        String(_pyBigIntA16 | _pyBigIntB2048))
     }
-    /*
+    
     func testNot() {
-        var a = BigInteger(from: numA2048)
-        var x : PythonObject = numA2048.pythonObject
+        //special case, a == 0
+        XCTAssertEqual(String(~BigInteger.ZERO),
+                       String(~0))
         
-        //positive NOT
-        XCTAssertEqual(String(~a), String(~Python.int(x)))
-        x = ("-" + numA2048).pythonObject
-        a = BigInteger(from: "-" + numA2048)
-        //negative NOT
-        XCTAssertEqual(String(~a), String(~Python.int(x)))
+        //small case, a > 0
+        XCTAssertEqual(String(~bigIntA16),
+                       String(~intA16))
+        //small case, a < 0
+        XCTAssertEqual(String(~_bigIntA16),
+                       String(~_intA16))
+        
+        //big case, a > 0
+        XCTAssertEqual(String(~bigIntA2048),
+                       String(~pyBigIntA2048))
+        //big case, a < 0
+        XCTAssertEqual(String(~_bigIntA2048),
+                       String(~_pyBigIntA2048))
     }
     
     func testXor() {
-        var a = BigInteger(from: numA2048)
-        var b = BigInteger(from: numB2048)
-        var x : PythonObject = numA2048.pythonObject
-        var y : PythonObject = numB2048.pythonObject
+        //special case, a == 0
+        XCTAssertEqual(String(BigInteger.ZERO ^ bigIntB2048),
+                       String(0 ^ pyBigIntB2048))
+        //special case, b == 0,
+        XCTAssertEqual(String(bigIntA2048 ^ BigInteger.ZERO),
+                       String(pyBigIntA2048 ^ 0))
+        //special case, a == 0 && b == 0, report error
+        XCTAssertEqual(String(BigInteger(from: "0") ^ BigInteger.ZERO),
+                       String(0 ^ 0))
         
-        //positive XOR positive
-        XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
-        x = ("-" + numA2048).pythonObject
-        a = BigInteger(from: "-" + numA2048)
-        //negative XOR positive
-        XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
-        y = ("-" + numB2048).pythonObject
-        b = BigInteger(from: "-" + numB2048)
-        //negative XOR negative
-        XCTAssertEqual(String(a ^ b), String(Python.int(x) ^ Python.int(y)))
+        //small case, a > 0 && b > 0
+        XCTAssertEqual(String(bigIntA16 ^ bigIntB16),
+                       String(intA16 ^ intB16))
+        //small case, a > 0 && b < 0
+        XCTAssertEqual(String(bigIntA16 ^ _bigIntB16),
+                       String(intA16 ^ _intB16))
+        //small case, a < 0 && b > 0
+        XCTAssertEqual(String(_bigIntA16 ^ bigIntB16),
+                       String(_intA16 ^ intB16))
+        //small case, a < 0 && b < 0
+        XCTAssertEqual(String(_bigIntA16 ^ _bigIntB16),
+                       String(_intA16 ^ _intB16))
+        
+        //big case, a > 0 && b > 0
+        XCTAssertEqual(String(bigIntA2048 ^ bigIntB2048),
+                       String(pyBigIntA2048 ^ pyBigIntB2048))
+        //big case, a > 0 && b < 0
+        XCTAssertEqual(String(bigIntA2048 ^ _bigIntB2048),
+                       String(pyBigIntA2048 ^ _pyBigIntB2048))
+        //big case, a < 0 && b > 0
+        XCTAssertEqual(String(_bigIntA2048 ^ bigIntB2048),
+                       String(_pyBigIntA2048 ^ pyBigIntB2048))
+        //big case, a < 0 && b < 0
+        XCTAssertEqual(String(_bigIntA2048 ^ _bigIntB2048),
+                       String(_pyBigIntA2048 ^ _pyBigIntB2048))
+        
+        //mix case, a > 0 && b > 0, a >> b  (>> stand for much larger)
+        XCTAssertEqual(String(bigIntA2048 ^ bigIntB16),
+                       String(pyBigIntA2048 ^ pyBigIntB16))
+        //mix case, a > 0 && b < 0, a << b
+        XCTAssertEqual(String(bigIntA16 ^ _bigIntB2048),
+                       String(pyBigIntA16 ^ _pyBigIntB2048))
+        //mix case, a < 0 && b > 0, a >> b
+        XCTAssertEqual(String(_bigIntA2048 ^ bigIntB16),
+                       String(_pyBigIntA2048 ^ pyBigIntB16))
+        //mix case, a < 0 && b < 0, a << b
+        XCTAssertEqual(String(_bigIntA16 ^ _bigIntB2048),
+                       String(_pyBigIntA16 ^ _pyBigIntB2048))
     }
     
     func testLeftShift() {
-        let a = BigInteger(from: numA20480)
-        let b = BigInteger(from: "-" + numA20480)
-        let x : PythonObject = numA20480.pythonObject
-        let y :PythonObject = ("-" + numA20480).pythonObject
-        //positive
-        XCTAssertEqual(String(a << 19358),
-                       String(Python.int(x) * Python.pow(2, 19358)))
-        //negative
-        XCTAssertEqual(String(b << 19358),
-                       String(Python.int(y) * Python.pow(2, 19358)))
+        //special case, a == 0
+        XCTAssertEqual(String(BigInteger.ZERO >> bigIntB2048),
+                       String(0 * Python.pow(2, pyBigIntB2048)))
+        //special case, b == 0,
+        XCTAssertEqual(String(bigIntA2048 ^ BigInteger.ZERO),
+                       String(pyBigIntA2048 ^ 0))
+        //special case, a == 0 && b == 0, report error
+        XCTAssertEqual(String(BigInteger(from: "0") ^ BigInteger.ZERO),
+                       String(0 ^ 0))
     }
-    
+    /*
     func testRightShift() {
         let a = BigInteger(from: numA20480)
         let b = BigInteger(from: "-" + numA20480)

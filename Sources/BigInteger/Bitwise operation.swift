@@ -133,14 +133,24 @@ extension BigInteger {
         var lhs = lhs
         var rhs = rhs
         var res = [UInt32]()
-        let count = max(lhs.mag.count, rhs.mag.count)
+        //let count = max(lhs.mag.count, rhs.mag.count)
+        //Add zeros if two mags don't have same length
+        if lhs.mag.count < rhs.mag.count {
+            for _ in lhs.mag.count ..< rhs.mag.count {
+                lhs.mag.append(0)
+            }
+        } else {
+            for _ in rhs.mag.count ..< lhs.mag.count {
+                rhs.mag.append(0)
+            }
+        }
         if !lhs.signum {
             lhs.mag.twosComplement()
         }
         if !rhs.signum {
             rhs.mag.twosComplement()
         }
-        for i in 0 ..< count {
+        for i in 0 ..< lhs.mag.count {
             res.append(lhs.mag[i] ^ rhs.mag[i])
         }
         // `^` and `!=` are logically equivalent, they have the same
