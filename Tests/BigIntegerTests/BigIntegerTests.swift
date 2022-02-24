@@ -550,7 +550,7 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(_bigIntA16 ^ _bigIntB2048),
                        String(_pyBigIntA16 ^ _pyBigIntB2048))
         
-        //|=
+        //^=
         var a = bigIntA2048
         a ^= bigIntB2048
         XCTAssertEqual(String(a),String(pyBigIntA2048 ^ pyBigIntB2048))
@@ -593,6 +593,11 @@ final class BigIntegerTests: XCTestCase {
         //mix case, a < 0, a << b
         XCTAssertEqual(String(BigInteger(from: "-6") << 19306),
                        String(-6 * Python.pow(2, 19306)))
+        
+        //<<=
+        var a = bigIntA2048
+        a <<= 19306
+        XCTAssertEqual(String(a),String(pyBigIntA2048 * Python.pow(2, 19306)))
     }
     
     func testRightShift() {
@@ -637,6 +642,13 @@ final class BigIntegerTests: XCTestCase {
         //mix case, a < 0, a << b
         XCTAssertEqual(String(BigInteger(from: "-6") >> 19306),
                        String(Python.divmod(-6, Python.pow(2, 19306)).tuple2.0))
+        
+        //<<=
+        var a = bigIntA2048
+        a >>= 58
+        XCTAssertEqual(String(a),
+                       String(Python.divmod(pyBigIntA2048,
+                                            Python.pow(2, 58)).tuple2.0))
     }
     
     //Return a n size positive test number

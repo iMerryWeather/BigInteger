@@ -46,10 +46,14 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers <<
+//Operator wrappers <<, <<=
 extension BigInteger {
     public static func << (this : BigInteger, n : UInt) -> BigInteger {
         return leftShift(this: this, n: n)
+    }
+    
+    public static func <<= (lhs : inout BigInteger, n : UInt) {
+        lhs = lhs << n
     }
 }
 
@@ -99,10 +103,14 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers >>
+//Operator wrappers >>, >>=
 extension BigInteger {
     public static func >> (this : BigInteger, n : UInt) -> BigInteger {
         return rightShift(this: this, n: n)
+    }
+    
+    public static func >>= (lhs : inout BigInteger, n : UInt) {
+        lhs = lhs >> n
     }
 }
 
