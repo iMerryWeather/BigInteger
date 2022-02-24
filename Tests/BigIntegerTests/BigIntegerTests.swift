@@ -416,6 +416,12 @@ final class BigIntegerTests: XCTestCase {
         //mix case, a < 0 && b < 0, a << b
         XCTAssertEqual(String(_bigIntA16 & _bigIntB2048),
                        String(_pyBigIntA16 & _pyBigIntB2048))
+        
+        //&=
+        var a = bigIntA2048
+        a &= bigIntB2048
+        XCTAssertEqual(String(a),String(pyBigIntA2048 & pyBigIntB2048))
+                                 
     }
     
     func testOr() {
@@ -467,6 +473,11 @@ final class BigIntegerTests: XCTestCase {
         //mix case, a < 0 && b < 0, a << b
         XCTAssertEqual(String(_bigIntA16 | _bigIntB2048),
                        String(_pyBigIntA16 | _pyBigIntB2048))
+        
+        //|=
+        var a = bigIntA2048
+        a |= bigIntB2048
+        XCTAssertEqual(String(a),String(pyBigIntA2048 | pyBigIntB2048))
     }
     
     func testNot() {
@@ -538,6 +549,11 @@ final class BigIntegerTests: XCTestCase {
         //mix case, a < 0 && b < 0, a << b
         XCTAssertEqual(String(_bigIntA16 ^ _bigIntB2048),
                        String(_pyBigIntA16 ^ _pyBigIntB2048))
+        
+        //|=
+        var a = bigIntA2048
+        a ^= bigIntB2048
+        XCTAssertEqual(String(a),String(pyBigIntA2048 ^ pyBigIntB2048))
     }
     
     func testLeftShift() {

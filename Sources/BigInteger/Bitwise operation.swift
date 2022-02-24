@@ -43,10 +43,14 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers &
+//Operator wrappers &, &=
 extension BigInteger {
     public static func & (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return and(lhs: lhs, rhs: rhs)
+    }
+    
+    public static func &= (lhs : inout BigInteger, rhs : BigInteger) {
+        lhs = lhs & rhs
     }
 }
 
@@ -87,10 +91,14 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers |
+//Operator wrappers |, |=
 extension BigInteger {
     public static func | (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return or(lhs: lhs, rhs: rhs)
+    }
+    
+    public static func |= (lhs : inout BigInteger, rhs : BigInteger) {
+        lhs = lhs | rhs
     }
 }
 
@@ -163,10 +171,14 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers ^
+//Operator wrappers ^, ^=
 extension BigInteger {
     public static func ^ (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return xor(lhs: lhs, rhs: rhs)
+    }
+    
+    public static func ^= (lhs : inout BigInteger, rhs : BigInteger) {
+        lhs = lhs ^ rhs
     }
 }
 
