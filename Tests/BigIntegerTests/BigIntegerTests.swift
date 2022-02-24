@@ -113,6 +113,11 @@ final class BigIntegerTests: XCTestCase {
         //mix case, a < 0 && b < 0, a << b
         XCTAssertEqual(String(_bigIntA16 + _bigIntB2048),
                        String(_pyBigIntA16 + _pyBigIntB2048))
+        
+        //+=
+        var a = bigIntA2048
+        a += bigIntB2048
+        XCTAssertEqual(String(a), String(pyBigIntA2048 + pyBigIntB2048))
     }
     
     func testSubtract() {
@@ -164,6 +169,11 @@ final class BigIntegerTests: XCTestCase {
         //mix case, a < 0 && b < 0, a << b
         XCTAssertEqual(String(_bigIntA16 - _bigIntB2048),
                        String(_pyBigIntA16 - _pyBigIntB2048))
+        
+        //-=
+        var a = bigIntA2048
+        a -= bigIntB2048
+        XCTAssertEqual(String(a), String(pyBigIntA2048 - pyBigIntB2048))
     }
     
     func testMultiply() {
@@ -215,6 +225,11 @@ final class BigIntegerTests: XCTestCase {
         //mix case, a < 0 && b < 0, a << b
         XCTAssertEqual(String(_bigIntA16 * _bigIntB2048),
                        String(_pyBigIntA16 * _pyBigIntB2048))
+        
+        //*=
+        var a = bigIntA2048
+        a *= bigIntB2048
+        XCTAssertEqual(String(a), String(pyBigIntA2048 * pyBigIntB2048))
     }
     
     func testDivide() {
@@ -275,6 +290,13 @@ final class BigIntegerTests: XCTestCase {
                                 .tuple2.0))
         
         //Python's division for negative number is not the same here.
+        
+        // /=
+        var a = bigIntA2048
+        a /= bigIntB2048
+        XCTAssertEqual(String(a),
+                       String(Python.divmod(pyBigIntA2048, pyBigIntB2048)
+                                            .tuple2.0))
     }
     
     func testMod() {
@@ -334,6 +356,13 @@ final class BigIntegerTests: XCTestCase {
         XCTAssertEqual(String(_bigIntA16 % _bigIntB2048),
                        String(Python.divmod(_pyBigIntA16, _pyBigIntB2048)
                                 .tuple2.1))
+        
+        //%=
+        var a = bigIntA2048
+        a %= bigIntB2048
+        XCTAssertEqual(String(a),
+                       String(Python.divmod(pyBigIntA2048, pyBigIntB2048)
+                                            .tuple2.1))
         
         //Python's division for negative number is not the same here.
     }

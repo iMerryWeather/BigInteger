@@ -109,10 +109,14 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers +
+//Operator wrappers +, +=
 extension BigInteger {
     public static func + (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return add(lhs: lhs, rhs: rhs)
+    }
+    
+    public static func += (lhs : inout BigInteger, rhs : BigInteger) {
+        lhs = lhs + rhs
     }
 }
 
@@ -165,7 +169,7 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers -
+//Operator wrappers -, -=
 extension BigInteger {
     public static func - (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return subtract(lhs: lhs, rhs: rhs)
@@ -175,5 +179,9 @@ extension BigInteger {
         var this = this
         this.negate()
         return this
+    }
+    
+    public static func -= (lhs : inout BigInteger, rhs : BigInteger) {
+        lhs = lhs - rhs
     }
 }

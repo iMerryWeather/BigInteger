@@ -165,9 +165,13 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers /
+//Operator wrappers /, /=
 extension BigInteger {
     public static func / (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
         return divide(lhs: lhs, rhs: rhs)
+    }
+    
+    public static func /= (lhs : inout BigInteger, rhs : BigInteger) {
+        lhs = lhs / rhs
     }
 }
