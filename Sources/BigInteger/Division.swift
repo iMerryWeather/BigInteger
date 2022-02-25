@@ -159,6 +159,8 @@ extension BigInteger {
                         -> BigInteger {
         if lhs == BigInteger.ZERO {
             return BigInteger.ZERO
+        } else if rhs == BigInteger.ZERO {
+            fatalError("Division by zero")
         }
         return BigInteger(signum: lhs.signum == rhs.signum,
                               mag: divide(mag1: lhs.mag, mag2: rhs.mag)/*.0*/)
