@@ -202,6 +202,20 @@ extension BigInteger {
         }
         return res
     }
+    
+    /*
+     * Return a Int whose value is the number of trailing zeros in this
+     * value's binary representation.
+     *
+     * Complexity: O(mag.count)
+     */
+    public func trailingZeroBitCount() -> Int {
+        var res = 0
+        for i in mag {
+            res += i.trailingZeroBitCount
+        }
+        return res
+    }
 }
 
 /*
