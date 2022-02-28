@@ -62,6 +62,9 @@ extension BigInteger {
 //Operator wrappers *, *=
 extension BigInteger {
     public static func * (lhs : BigInteger, rhs : BigInteger) -> BigInteger {
+        if rhs.nonzeroBitCount() == 1 {
+            return lhs << UInt(rhs.trailingZeroBitCount())
+        }
         return multiply(lhs: lhs, rhs: rhs)
     }
     
