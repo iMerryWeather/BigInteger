@@ -157,10 +157,12 @@ extension BigInteger {
      */
     private static func divide(lhs : BigInteger, rhs : BigInteger)
                         -> BigInteger {
-        if lhs == BigInteger.ZERO {
+        if lhs == BigInteger.ZERO { // zero dividend
             return BigInteger.ZERO
-        } else if rhs == BigInteger.ZERO {
+        } else if rhs == BigInteger.ZERO { // divided by zero
             fatalError("Division by zero")
+        } else if rhs.nonzeroBitCount() == 1 { // divided by 2 ** n
+            return lhs >> UInt(rhs.trailingZeroBitCount())
         }
         return BigInteger(signum: lhs.signum == rhs.signum,
                               mag: divide(mag1: lhs.mag, mag2: rhs.mag)/*.0*/)

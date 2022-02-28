@@ -187,16 +187,12 @@ extension BigInteger {
     /*
      * Return a Int whose value is the number of bits equal to 1 in this
      * value's binary representation. Notice that negative big integer has
-     * infinity numbers of 1s which is nonsense.
+     * infinity numbers of 1s. Absolute value result will be returned.
      *
      * Complexity: O(mag.count)
      */
     public func nonzeroBitCount() -> Int {
         var res = 0
-        if !self.signum {
-            fatalError("Counting non-zero bit for negative big integer is no" +
-                       " supported")
-        }
         for i in mag {
             res += i.nonzeroBitCount
         }

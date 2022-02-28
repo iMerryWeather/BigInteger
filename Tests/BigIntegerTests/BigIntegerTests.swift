@@ -242,6 +242,11 @@ final class BigIntegerTests: XCTestCase {
         //special case, a == 0 && b == 0, report error
 //        XCTAssertEqual(String(BigInteger(from: "0") / BigInteger.ZERO),
 //                       String(0 / 0))
+        //special case, b == 2 ** n
+        XCTAssertEqual(String(bigIntA2048 / (BigInteger(from: "1") << 3648)),
+                       String(Python.divmod(pyBigIntA2048,
+                                            Python.pow(2, 3648)).tuple2.0))
+        
         //small case, a > 0 && b > 0
         XCTAssertEqual(String(bigIntA16 / bigIntB16),
                        String(intA16 / intB16))
