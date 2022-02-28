@@ -91,17 +91,13 @@ extension BigInteger {
         } else if lhs == BigInteger.ZERO {
             return rhs
         }
-        var lhs = lhs
-        var rhs = rhs
         if lhs.signum && rhs.signum { //case 1
             return BigInteger(signum: true,
                               mag: add(mag1: lhs.mag, mag2: rhs.mag))
         } else if lhs.signum && (!rhs.signum) { //case 2
-            rhs.negate()
-            return lhs - rhs
+            return lhs - (-rhs)
         } else if (!lhs.signum) && rhs.signum { //case 3
-            lhs.negate()
-            return rhs - lhs
+            return rhs - (-lhs)
         } else { //case 4
             return BigInteger(signum: false,
                               mag: add(mag1: lhs.mag, mag2: rhs.mag))
@@ -142,7 +138,6 @@ extension BigInteger {
         } else if lhs == BigInteger.ZERO {
             return -rhs
         }
-        var rhs = rhs
         var c : BigInteger
         if lhs.signum && rhs.signum {                                //a > b
             if BigInteger.compareMag(mag1: lhs.mag, mag2: rhs.mag) { //gets a-b
@@ -154,8 +149,7 @@ extension BigInteger {
             }
         } else if (lhs.signum && !rhs.signum) ||
                   (!lhs.signum && rhs.signum)    {
-            rhs.negate()
-            return lhs + rhs
+            return lhs + (-rhs)
         } else {                                                     //a > b
             if BigInteger.compareMag(mag1: lhs.mag, mag2: rhs.mag) { //gets a-b
                 c = BigInteger(signum: false,                     // minus sign
@@ -176,9 +170,7 @@ extension BigInteger {
     }
     
     public static prefix func - (this : BigInteger) -> BigInteger {
-        var this = this
-        this.negate()
-        return this
+        return this.negate()
     }
     
     public static func -= (lhs : inout BigInteger, rhs : BigInteger) {

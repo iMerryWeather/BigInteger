@@ -228,10 +228,17 @@ public struct BigInteger : Equatable {
     }
 
     /*
-     * if a is a BigInteger, then a.negate() will get
-     *  value = -a
+     * if a is a BigInteger, then a.negate() will get value = -a
      */
-    mutating func negate() {
-        self.signum = !self.signum
+    public func negate() -> BigInteger {
+        return BigInteger(signum: !self.signum, mag: self.mag)
+    }
+    
+    /*
+     * Returns a BigInteger whose value is the absolute value of this
+     * BigInteger.
+     */
+    public func abs() -> BigInteger {
+        return signum ? self : self.negate()
     }
 }
