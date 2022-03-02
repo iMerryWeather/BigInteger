@@ -24,3 +24,21 @@ extension BigInteger {
         return true
     }
 }
+
+//Operator wrappers >, >=, <, <=
+extension BigInteger {
+    public static func > (lhs : BigInteger, rhs : BigInteger) -> Bool {
+        if lhs.signum == rhs.signum {
+            if lhs.mag == rhs.mag {
+                return false
+            }
+            if lhs.signum { // both positive
+                return compareMag(mag1: lhs.mag, mag2: rhs.mag)
+            } else {
+                return compareMag(mag1: rhs.mag, mag2: lhs.mag)
+            }
+        } else {
+            return lhs.signum
+        }
+    }
+}
