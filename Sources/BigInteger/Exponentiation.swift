@@ -41,4 +41,24 @@ extension BigInteger {
         
         return res
     }
+    
+    /*
+     * Returns a BigInteger whose value is (a ** b) mod n.
+     */
+    public static func pow(_ a : BigInteger,
+                           _ b : BigInteger,
+                           _ n : BigInteger) -> BigInteger {
+        var a = a % n
+        var b = b
+        var res = BigInteger.ONE
+        while b > BigInteger.ZERO {
+            if (b & BigInteger.ONE) == BigInteger.ONE {
+                res = res * a % n
+            }
+            a = a * a % n
+            b >>= 1
+        }
+        
+        return res
+    }
 }
