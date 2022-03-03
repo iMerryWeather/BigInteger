@@ -47,6 +47,11 @@ public struct BigInteger : Equatable {
     public static let ONE = BigInteger(signum: true, mag: [1])
     
     /*
+     * The BigInteger constant TWO
+     */
+    public static let TWO = BigInteger(signum: true, mag: [2])
+    
+    /*
      * Translates the decimal String representation of a BigInteger into a
      * BigInteger. The String representation consists of an optional minus or
      * plus sign followed by a sequence of one or more decimal digits.
