@@ -208,6 +208,17 @@ extension BigInteger {
     public func trailingZeroBitCount() -> Int {
         return mag[0].trailingZeroBitCount
     }
+    
+    /*
+     * Return a Int whose value is the length of this value's binary
+     * representation.
+     *
+     * Complexity: O(1)
+     */
+    public func bitLength() -> Int {
+        return (self.mag.count - 1) * 32 +
+               (32 - self.mag.last!.leadingZeroBitCount)
+    }
 }
 
 /*
