@@ -25,7 +25,7 @@ extension BigInteger {
     }
 }
 
-//Operator wrappers >, >=, <, <=
+//Operator wrappers >, >=, <, <=, !=
 extension BigInteger {
     public static func > (lhs : BigInteger, rhs : BigInteger) -> Bool {
         if lhs.signum == rhs.signum {
@@ -40,5 +40,12 @@ extension BigInteger {
         } else {
             return lhs.signum
         }
+    }
+    
+    /*
+     * Return true if lhs != rhs
+     */
+    public static func != (lhs : BigInteger, rhs : BigInteger) -> Bool {
+        return !(lhs == rhs)
     }
 }
