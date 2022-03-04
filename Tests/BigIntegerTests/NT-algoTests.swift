@@ -1,5 +1,5 @@
 import XCTest
-@testable import BigInteger
+import BigInteger
 import PythonKit
 
 final class NT_algoTests : XCTestCase {

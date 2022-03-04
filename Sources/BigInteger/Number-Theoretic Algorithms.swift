@@ -92,4 +92,18 @@ extension BigInteger {
         }
         return true
     }
+    
+    /*
+     * Returns a BigInteger who is probably prime,
+     */
+    public static func
+                nextProbablePrime(withMaximumWidth width : Int) -> BigInteger {
+        while true {
+            var a = BigInteger.randomBigInteger(withMaximumWidth: width)
+            a |= BigInteger.ONE
+            if a.primeToCertainty(4) {
+                return a
+            }
+        }
+    }
 }

@@ -1,5 +1,5 @@
 import XCTest
-@testable import BigInteger
+import BigInteger
 import PythonKit
 
 final class BigIntegerTests: XCTestCase {
@@ -41,20 +41,20 @@ final class BigIntegerTests: XCTestCase {
     let _intB16 = Int(_numB16)!
     let _pyBigIntB16 = Python.int(_numB16.pythonObject)
     
-    func testPublicInitFromStr() {
-        let a = BigInteger(from:
-                "0000000000000000000000000000000000000612361193061935861237")
-        XCTAssertEqual(a.mag, [1125502453, 842529961, 33])
-        XCTAssertEqual(a.signum, true)
-
-        let b = BigInteger(from: "-0006123611930619358612362")
-        XCTAssertEqual(b.mag, [2665089930, 4130332316, 331])
-        XCTAssertEqual(b.signum, false)
-
-        let c = BigInteger(from: "0")
-        XCTAssertEqual(c.mag, [0])
-        XCTAssertEqual(c.signum, true)
-    }
+//    func testPublicInitFromStr() {
+//        let a = BigInteger(from:
+//                "0000000000000000000000000000000000000612361193061935861237")
+//        XCTAssertEqual(a.mag, [1125502453, 842529961, 33])
+//        XCTAssertEqual(a.signum, true)
+//
+//        let b = BigInteger(from: "-0006123611930619358612362")
+//        XCTAssertEqual(b.mag, [2665089930, 4130332316, 331])
+//        XCTAssertEqual(b.signum, false)
+//
+//        let c = BigInteger(from: "0")
+//        XCTAssertEqual(c.mag, [0])
+//        XCTAssertEqual(c.signum, true)
+//    }
 
     func testStringConvertible() {
         let a = BigInteger(from: "612361193061935861237")
