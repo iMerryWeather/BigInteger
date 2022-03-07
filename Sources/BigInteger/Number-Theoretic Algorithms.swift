@@ -35,20 +35,21 @@ extension BigInteger {
      * Returns a BigInteger whose value consisted of `width` random bits.
      */
     public static func
-            randomBigInteger(withMaximumWidth width : Int) -> BigInteger {
-        var rng = SystemRandomNumberGenerator()
-        if width < 32 {
-            return BigInteger(signum: true, mag: [rng.next() % UInt32.max])
+            randomBigInteger(withMaximumWidth width : Int,
+                    _ RNG : inout SystemRandomNumberGenerator) -> BigInteger {
+        if width <= 32 {
+            return BigInteger(signum: true,
+                              mag: [RNG.next(upperBound: UInt32.max)])
         }
         let count = width / 32
         let rem = width % 32
         var mag = [UInt32]()
         mag.reserveCapacity(count + (rem == 0 ? 0 : 1))
         for _ in 0 ..< count {
-            mag.append(rng.next() % UInt32.max)
+            mag.append(RNG.next(upperBound: UInt32.max))
         }
         for _ in count ..< mag.count {
-            mag.append((rng.next() % UInt32.max) & ((1 << (32 - rem)) - 1))
+            mag.append(RNG.next(upperBound: UInt32.max) & ((1 << (32-rem)) - 1))
         }
         return BigInteger(signum: true, mag: mag)
     }
@@ -82,10 +83,12 @@ extension BigInteger {
      *
      * See CLRS, _Introduction to Algorithms_, 3e, Chapter 31.
      */
-    public func primeToCertainty(_ rounds : Int) -> Bool {
+    public func primeToCertainty(_ rounds : Int,
+                            _ RNG : inout SystemRandomNumberGenerator) -> Bool {
         for _ in 1 ... rounds {
-            let length = arc4random() % UInt32(bitLength())
-            let a = BigInteger.randomBigInteger(withMaximumWidth: Int(length))
+            let length = RNG.next(upperBound: UInt(bitLength()))
+            let a = BigInteger.randomBigInteger(withMaximumWidth: Int(length),
+                                                &RNG)
             if BigInteger.witness(a, self) {
                 return false
             }
@@ -97,11 +100,12 @@ extension BigInteger {
      * Returns a BigInteger who is probably prime,
      */
     public static func
-                nextProbablePrime(withMaximumWidth width : Int) -> BigInteger {
+        nextProbablePrime(withMaximumWidth width : Int,
+                    _ RNG : inout SystemRandomNumberGenerator) -> BigInteger {
         while true {
-            var a = BigInteger.randomBigInteger(withMaximumWidth: width)
+            var a = BigInteger.randomBigInteger(withMaximumWidth: width, &RNG)
             a |= BigInteger.ONE
-            if a.primeToCertainty(4) {
+            if a.primeToCertainty(4, &RNG) {
                 return a
             }
         }
