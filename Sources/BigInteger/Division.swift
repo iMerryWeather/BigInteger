@@ -27,7 +27,8 @@ extension BigInteger {
         return n
     }
 
-    static func divide(mag1 : [UInt32], mag2 : [UInt32]) -> [UInt32] {
+    static func divide(mag1 : [UInt32],
+                       mag2 : [UInt32]) -> ([UInt32], [UInt32]) {
         let u = mag1
         let v = mag2
         //calculate m & n first
@@ -37,11 +38,11 @@ extension BigInteger {
 
         //for dividend < divisor
         if m < n {
-            return /*(*/[0]/*, u)*/
+            return ([0], u)
         }
         
         var q = [UInt32](repeating: 0, count: m - n + 1)
-        //var r = [UInt32](repeating: 0, count: n)
+        var r = [UInt32](repeating: 0, count: n)
         var k : Int64 = 0
         var t : Int64 = 0
         var p : UInt64 = 0
@@ -51,7 +52,7 @@ extension BigInteger {
         
         //for same dividend & divisor
         if u == v {
-            return /*(*/[1]/*, [0])*/
+            return ([1], [0])
         }
 
         //Special case one word divisor
@@ -62,8 +63,8 @@ extension BigInteger {
                             ((k << 32) + Int64(u[j])) / Int64(v[0]))
                 k = ((k << 32) + Int64(u[j])) - Int64(q[j]) * Int64(v[0])
             }
-            //r.append(UInt32(k))
-            return /*(*/q/*, r)*/
+            r.append(UInt32(k))
+            return (q, r)
         }
 
         //normalize v & n
@@ -119,7 +120,8 @@ extension BigInteger {
             t = Int64(un[j + n]) - k
             un[j + n] = UInt32(bitPattern: Int32(t))
 
-            q[j] = UInt32(q_hat) //store quotient digit
+            q[j] = UInt32(truncatingIfNeeded: q_hat)
+            //UInt32(q_hat) //store quotient digit
             if t < 0 {           //if we subtracted too, add back
                 q[j] -= 1
                 k = 0
@@ -132,13 +134,13 @@ extension BigInteger {
             }
         }
 
-//        for i in 0 ..< n {
-//            r[i] = (un[i] >> s) |
-//                   UInt32(truncatingIfNeeded: (UInt64(un[i + 1]) << (32 - s)))
-//        }
-//        r[n - 1] = un[n - 1] >> s
+        for i in 0 ..< n {
+            r[i] = (un[i] >> s) |
+                   UInt32(truncatingIfNeeded: (UInt64(un[i + 1]) << (32 - s)))
+        }
+        r[n - 1] = un[n - 1] >> s
 
-        return /*(*/q/*, r)*/
+        return (q, r)
     }
 }
 
@@ -165,7 +167,7 @@ extension BigInteger {
             return lhs >> UInt(rhs.trailingZeroBitCount())
         }
         return BigInteger(signum: lhs.signum == rhs.signum,
-                              mag: divide(mag1: lhs.mag, mag2: rhs.mag)/*.0*/)
+                              mag: divide(mag1: lhs.mag, mag2: rhs.mag).0)
     }
 }
 

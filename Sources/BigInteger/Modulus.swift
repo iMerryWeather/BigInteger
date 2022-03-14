@@ -6,12 +6,12 @@
 //
 
 extension BigInteger {
-    //Currently we consider that r is non-negative number.
+    //r has the same signum of lhs
     private static func mod(lhs : BigInteger, rhs : BigInteger)
                         -> BigInteger {
-        return lhs - lhs / rhs * rhs
-                            //return BigInteger(signum: true,
-                              //mag: divide(mag1: lhs.mag, mag2: rhs.mag).1)
+        //return lhs - lhs / rhs * rhs
+                            return BigInteger(signum: lhs.signum,
+                              mag: divide(mag1: lhs.mag, mag2: rhs.mag).1)
     }
 }
 
