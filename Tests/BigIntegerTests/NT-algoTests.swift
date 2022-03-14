@@ -45,12 +45,15 @@ final class NT_algoTests : XCTestCase {
          let py_math = Python.import("math")
          XCTAssertEqual(String(BigInteger.gcd(BigInteger.ZERO, BigInteger.ZERO)),
                         String(0))
-         XCTAssertEqual(String(BigInteger.gcd(bigIntA2048, bigIntB2048)),
-                        String(py_math.gcd(pyBigIntA2048, pyBigIntB2048)))
+         BigInteger.gcd(BigInteger(12312312312), BigInteger(231321231))
+         //XCTAssertEqual(String(BigInteger.gcd(bigIntA2048, bigIntB2048)),
+                        //String(py_math.gcd(pyBigIntA2048, pyBigIntB2048)))
+         //print(BigInteger(231321231) % BigInteger(52287069))
      }
     
     func testPrime() {
         var rng = SystemRandomNumberGenerator()
         print(BigInteger.nextProbablePrime(withMaximumWidth: 2048, &rng))
+        //print(BigInteger.largePrime(withMaximumWidth: 2048, 4, &rng))
     }
 }

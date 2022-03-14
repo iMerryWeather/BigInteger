@@ -63,7 +63,8 @@ extension BigInteger {
                             ((k << 32) + Int64(u[j])) / Int64(v[0]))
                 k = ((k << 32) + Int64(u[j])) - Int64(q[j]) * Int64(v[0])
             }
-            r.append(UInt32(k))
+            //r.append(UInt32(k))
+            r[0] = UInt32(k)
             return (q, r)
         }
 
