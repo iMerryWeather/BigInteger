@@ -51,6 +51,73 @@ public struct BigInteger : Equatable {
      */
     public static let TWO = BigInteger(signum: true, mag: [2])
     
+//Constructors (and its helper funcs)
+//===----------------------------------------------------------------------===//
+    /*
+     * Returns a BigInteger whose value is equal to that of the specified UInt32
+     */
+    public init(_ val : UInt32) {
+        mag = [UInt32]()
+        mag.append(val)
+        signum = true
+    }
+    
+    /*
+     * Returns a BigInteger whose value is equal to that of the specified UInt
+     * (64-bit)
+     */
+    public init(_ val : UInt) {
+        mag = [UInt32]()
+        mag.append(UInt32(truncatingIfNeeded: val))
+        mag.append(UInt32(val >> 32))
+        signum = true
+    }
+    
+    /*
+     * Returns a BigInteger whose value is equal to that of the specified UInt64
+     */
+    public init(_ val : UInt64) {
+        self.init(UInt(val))
+    }
+    
+    /*
+     * Returns a BigInteger whose value is equal to that of the specified Int32
+     */
+    public init(_ val : Int32) {
+        mag = [UInt32]()
+        if val < 0 {
+            signum = false
+            mag.append(UInt32(-val))
+        } else {
+            mag.append(UInt32(val))
+            signum = true
+        }
+    }
+    
+    /*
+     * Returns a BigInteger whose value is equal to that of the specified Int
+     * (64-bit)
+     */
+    public init(_ val : Int) {
+        mag = [UInt32]()
+        var val = val
+        if val < 0 {
+            val = -val
+            signum = false
+        } else {
+            signum = true
+        }
+        mag.append(UInt32(truncatingIfNeeded: val))
+        mag.append(UInt32(val >> 32))
+    }
+    
+    /*
+     * Returns a BigInteger whose value is equal to that of the specified Int64
+     */
+    public init(_ val : Int64) {
+        self.init(Int(val))
+    }
+    
     /*
      * Translates the decimal String representation of a BigInteger into a
      * BigInteger. The String representation consists of an optional minus or
@@ -209,6 +276,7 @@ public struct BigInteger : Equatable {
         }
         return mag
     }
+//===----------------------------------------------------------------------===//
     
     /*
      * Remove all leading zeros for a string representation of BigInteger. And
