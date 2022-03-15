@@ -24,7 +24,6 @@ extension BigInteger {
     
     private static func euclid(_ a : BigInteger,
                                _ b : BigInteger) -> BigInteger {
-        print("(\(a),\(b))")
         if b == BigInteger.ZERO {
             return a
         } else {
@@ -111,12 +110,16 @@ extension BigInteger {
             var a = BigInteger.randomBigInteger(withMaximumWidth: width, &RNG)
             //a |= BigInteger.ONE
             a.mag[0] |= 1
+            if BigInteger.gcd(a, BigInteger.PRODUCT_OF_PRIMES) !=
+                BigInteger.ONE {
+                continue
+            }
             if a.primeToCertainty(4, &RNG) {
                 return a
             }
         }
     }
-    
+    /*
     private static func getPrimeSearchLen(_ bitLength : Int) -> Int {
         return bitLength / 20 * 64
     }
@@ -127,7 +130,7 @@ extension BigInteger {
         var p = BigInteger.randomBigInteger(withMaximumWidth: width, &RNG)
         p.mag[0] &= 0xfffffffe
         
-        var searchLen = getPrimeSearchLen(width)
+        let searchLen = getPrimeSearchLen(width)
         var searchSieve = BitSieve(p, searchLen)
         var candidate = searchSieve.retrieve(p, 4, &RNG)
 
@@ -142,9 +145,9 @@ extension BigInteger {
             candidate = searchSieve.retrieve(p, certainty, &RNG)
         }
         return candidate!;
-    }
+    }*/
 }
-
+/*
 struct BitSieve {
     /*
      * Stores the bits in this bitSieve.
@@ -321,3 +324,4 @@ struct BitSieve {
         return nil
     }
 }
+*/
