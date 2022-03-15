@@ -62,18 +62,21 @@ extension BigInteger {
         //}
         let t = nMinusOne.trailingZeroBitCount()
         let u = nMinusOne >> UInt(t)
-        var x = [BigInteger]()
-        
-        x.append(BigInteger.pow(a, u, n))
-        for i in 1 ... t {
-            x.append(x[i - 1] * x[i - 1] % n)
-            if x[i] == BigInteger.ONE &&
-               x[i - 1] != BigInteger.ONE &&
-               x[i - 1] != nMinusOne {
+        //var x = [BigInteger]()
+        var xiMinusOne = BigInteger.pow(a, u, n)
+        //x.append(BigInteger.pow(a, u, n))
+        var xi = BigInteger.ZERO
+        for _ in 1 ... t {
+            //x.append(x[i - 1] * x[i - 1] % n)
+            xi = xiMinusOne * xiMinusOne % n
+            if xi/*x[i]*/ == BigInteger.ONE &&
+               xiMinusOne/*x[i - 1]*/ != BigInteger.ONE &&
+                xiMinusOne/*x[i - 1]*/ != nMinusOne {
                 return true
             }
+            xiMinusOne = xi
         }
-        if x[t] != BigInteger.ONE {
+        if xi/*x[t]*/ != BigInteger.ONE {
             return true
         }
         return false
