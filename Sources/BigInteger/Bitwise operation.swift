@@ -212,7 +212,7 @@ extension BigInteger {
         repeat {
             res += mag[i].trailingZeroBitCount
             i += 1
-        } while (mag[i] == 0)
+        } while (i < mag.count && mag[i] == 0)
         return res
     }
     
